@@ -1,0 +1,6 @@
+
+@LV2NAME@:ui_gl
+	a @UI_TYPE@ ;
+	@UI_REQ@
+  .
+

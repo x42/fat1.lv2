@@ -28,45 +28,25 @@
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 #include <lv2/lv2plug.in/ns/ext/log/logger.h>
 
+#include "fat1.h"
 #include "retuner.h"
-
-#define FAT_URI "http://gareus.org/oss/lv2/fat1"
-
 
 typedef struct {
 	LV2_URID atom_Sequence;
-	LV2_URID midi_MidiEvent;
 } MidiMapURIs;
-
-typedef enum {
-	FAT_MIDI_IN = 0,
-	FAT_INPUT, FAT_OUTPUT,
-	FAT_MODE,
-	FAT_MCHN,
-	FAT_TUNE,
-	FAT_BIAS,
-	FAT_FILT,
-	FAT_CORR,
-	FAT_OFFS, // 9
-
-	FAT_MASK = 10, // + 12 notes
-	FAT_NOTE = 22, // + 12 notes
-	FAT_LAST = 34
-} PortIndex;
 
 typedef struct {
 	const LV2_Atom_Sequence* midiin;
 
-	/* atom-forge and URI mapping */
-	LV2_URID_Map* map;
-	MidiMapURIs uris;
+	/* URI mapping */
+	LV2_URID midi_MidiEvent;
 
 	/* LV2 Output */
 	LV2_Log_Log* log;
 	LV2_Log_Logger logger;
 
 	/* I/O Ports */
-	float*   port [FAT_LAST];
+	float* port [FAT_LAST];
 
 	/* internal state */
 	LV2AT::Retuner* retuner;
@@ -75,21 +55,13 @@ typedef struct {
 	int notemask;
 	int midimask;
 	int midichan;
-
+	float latency;
 } Fat1;
 
 
 /* *****************************************************************************
  * helper functions
  */
-
-/** map uris */
-static void
-map_mem_uris (LV2_URID_Map* map, MidiMapURIs* uris)
-{
-	uris->midi_MidiEvent      = map->map (map->handle, LV2_MIDI__MidiEvent);
-	uris->atom_Sequence       = map->map (map->handle, LV2_ATOM__Sequence);
-}
 
 static void clear_midimask (Fat1* self)
 {
@@ -153,19 +125,20 @@ instantiate (const LV2_Descriptor*     descriptor,
              const LV2_Feature* const* features)
 {
 	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
+	LV2_URID_Map* map;
 
 	int i;
 	for (i=0; features[i]; ++i) {
 		if (!strcmp (features[i]->URI, LV2_URID__map)) {
-			self->map = (LV2_URID_Map*)features[i]->data;
+			map = (LV2_URID_Map*)features[i]->data;
 		} else if (!strcmp (features[i]->URI, LV2_LOG__log)) {
 			self->log = (LV2_Log_Log*)features[i]->data;
 		}
 	}
 
-	lv2_log_logger_init (&self->logger, self->map, self->log);
+	lv2_log_logger_init (&self->logger, map, self->log);
 
-	if (!self->map) {
+	if (!map) {
 		lv2_log_error (&self->logger, "Fat1.lv2 error: Host does not support urid:map\n");
 		free (self);
 		return NULL;
@@ -177,7 +150,16 @@ instantiate (const LV2_Descriptor*     descriptor,
 	self->midichan = -1;
 	clear_midimask (self);
 
-	map_mem_uris (self->map, &self->uris);
+	self->midi_MidiEvent = map->map (map->handle, LV2_MIDI__MidiEvent);
+
+	// compare Retuner c'tor
+	if (rate < 64000) {
+		self->latency = 1024;
+	} else if (rate < 128000) {
+		self->latency = 2048;
+	} else {
+		self->latency = 4096;
+	}
 	return (LV2_Handle)self;
 }
 
@@ -199,10 +181,14 @@ static void
 run (LV2_Handle instance, uint32_t n_samples)
 {
 	Fat1* self = (Fat1*)instance;
-	if (!self->midiin) {
+
+	*self->port [FAT_LTNC] = self->latency;
+
+	if (!self->midiin || n_samples == 0) {
 		return;
 	}
 
+	/* set mode and midi-channel */
 	const int mchn = rint (*self->port [FAT_MCHN]);
 	if (mchn <= 0 || mchn > 16) {
 		self->midichan = -1;
@@ -218,35 +204,25 @@ run (LV2_Handle instance, uint32_t n_samples)
 	bool update_midi = false;
 	LV2_Atom_Event* ev = lv2_atom_sequence_begin (&(self->midiin)->body);
 	while (!lv2_atom_sequence_is_end (&(self->midiin)->body, (self->midiin)->atom.size, ev)) {
-		if (ev->body.type == self->uris.midi_MidiEvent) {
+		if (ev->body.type == self->midi_MidiEvent) {
 			update_midi |= parse_midi (self, ev->time.frames, (uint8_t*)(ev+1), ev->body.size);
 
 		}
 		ev = lv2_atom_sequence_next (ev);
 	}
-
 	if (update_midi) {
 		update_midimask (self);
 	}
 
-	self->retuner->set_refpitch (*self->port [FAT_TUNE]);
-	self->retuner->set_notebias (*self->port [FAT_BIAS]);
-	self->retuner->set_corrfilt (*self->port [FAT_FILT]);
-	self->retuner->set_corrgain (*self->port [FAT_CORR]);
-	self->retuner->set_corroffs (*self->port [FAT_OFFS]);
-
-	float *aip = self->port [FAT_INPUT];
-	float *aop = self->port [FAT_OUTPUT];
-
+	/* prepare key-range midi/fixed */
 	if (mode != 1) {
 		self->notemask = 0;
 		for (int i = 0; i < 12; ++i) {
-			if (*self->port [FAT_MASK + i] > 0) {
+			if (*self->port [FAT_NOTE + i] > 0) {
 				self->notemask |= 1 << i;
 			}
 		}
 	}
-
 
 	int notes;
 	switch (mode) {
@@ -260,12 +236,21 @@ run (LV2_Handle instance, uint32_t n_samples)
 			notes = self->midimask ? self->midimask : self->notemask;
 	}
 
+	/* push config to retuner */
+	self->retuner->set_refpitch (*self->port [FAT_TUNE]);
+	self->retuner->set_notebias (*self->port [FAT_BIAS]);
+	self->retuner->set_corrfilt (*self->port [FAT_FILT]);
+	self->retuner->set_corrgain (*self->port [FAT_CORR]);
+	self->retuner->set_corroffs (*self->port [FAT_OFFS]);
 	self->retuner->set_notemask (notes);
-	self->retuner->process (n_samples, aip, aop);
 
-	for (int i = 0; i < 12; ++i) {
-		*self->port [FAT_NOTE + i] = notes & (1 << i) ? 1 : 0;
-	}
+	/* process */
+	self->retuner->process (n_samples, self->port [FAT_INPUT], self->port [FAT_OUTPUT]);
+
+	/* report */
+	*self->port [FAT_MASK] = notes;
+	*self->port [FAT_NSET] = self->retuner->get_noteset ();
+	*self->port [FAT_ERRR] = self->retuner->get_error ();
 }
 
 static void
@@ -280,7 +265,8 @@ cleanup (LV2_Handle instance)
 static void
 activate (LV2_Handle instance)
 {
-	;
+	Fat1* self = (Fat1*)instance;
+	clear_midimask (self);
 }
 
 const void*
@@ -290,7 +276,7 @@ extension_data (const char* uri)
 }
 
 static const LV2_Descriptor descriptor = {
-	FAT_URI,
+	FAT1_URI,
 	instantiate,
 	connect_port,
 	activate,

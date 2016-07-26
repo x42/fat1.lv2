@@ -6,7 +6,11 @@
 @prefix pprop: <http://lv2plug.in/ns/ext/port-props#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
+
+@prefix @LV2NAME@: <http://gareus.org/oss/lv2/@LV2NAME@#> .
 
 <http://gareus.org/rgareus#me>
 	a foaf:Person;
@@ -20,8 +24,10 @@
 	doap:maintainer <http://gareus.org/rgareus#me>;
 	doap:name "Autotuner";
 	@VERSION@
+  @UITTL@
 	lv2:optionalFeature lv2:hardRTCapable;
 	lv2:requiredFeature urid:map;
+	@SIGNATURE@;
 
 	lv2:port [
 		a atom:AtomPort, lv2:InputPort;
@@ -54,8 +60,8 @@
 		lv2:maximum 2 ;
 		lv2:portProperty lv2:integer, lv2:enumeration;
 		lv2:scalePoint [ rdfs:label  "Auto"; rdf:value 0 ; ] ;
-		lv2:scalePoint [ rdfs:label  "Midi"; rdf:value 1 ; ] ;
-		lv2:scalePoint [ rdfs:label  "Fixed"; rdf:value 2 ; ] ;
+		lv2:scalePoint [ rdfs:label  "MIDI"; rdf:value 1 ; ] ;
+		lv2:scalePoint [ rdfs:label  "Manual"; rdf:value 2 ; ] ;
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
@@ -93,6 +99,7 @@
 		lv2:default 440 ;
 		lv2:minimum 400 ;
 		lv2:maximum 480 ;
+		units:unit units:hz;
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
@@ -257,110 +264,38 @@
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
 		lv2:index 22 ;
-		lv2:symbol "n00" ;
-		lv2:name "C";
+		lv2:symbol "nmask" ;
+		lv2:name "Note Mask";
 		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
+		lv2:maximum 4096 ;
+		lv2:portProperty lv2:integer;
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
 		lv2:index 23 ;
-		lv2:symbol "n01" ;
-		lv2:name "C#";
+		lv2:symbol "nset" ;
+		lv2:name "Note Set";
 		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
+		lv2:maximum 4096 ;
+		lv2:portProperty lv2:integer;
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
 		lv2:index 24 ;
-		lv2:symbol "n02" ;
-		lv2:name "D";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
+		lv2:symbol "error" ;
+		lv2:name "Pitch Error";
+		lv2:minimum -1.0 ;
+		lv2:maximum  1.0 ;
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
 		lv2:index 25 ;
-		lv2:symbol "n03" ;
-		lv2:name "D#";
+		lv2:symbol "latency" ;
+		lv2:name "latency";
 		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 26 ;
-		lv2:symbol "n04" ;
-		lv2:name "E";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 27 ;
-		lv2:symbol "n05" ;
-		lv2:name "F";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 28 ;
-		lv2:symbol "n06" ;
-		lv2:name "F#";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 29 ;
-		lv2:symbol "n07" ;
-		lv2:name "G";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 30 ;
-		lv2:symbol "n08" ;
-		lv2:name "G#";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 31 ;
-		lv2:symbol "n09" ;
-		lv2:name "A";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 32 ;
-		lv2:symbol "n10" ;
-		lv2:name "A#";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
-	] , [
-		a lv2:OutputPort ,
-			lv2:ControlPort ;
-		lv2:index 33 ;
-		lv2:symbol "n11" ;
-		lv2:name "B";
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
-		lv2:portProperty lv2:integer, lv2:toggled;
+		lv2:maximum 4096;
+		lv2:portProperty lv2:reportsLatency, lv2:integer;
+		units:unit units:frame;
 	];
 	rdfs:comment "...";
 	.
