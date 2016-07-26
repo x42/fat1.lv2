@@ -27,7 +27,7 @@
   @UITTL@
 	lv2:optionalFeature lv2:hardRTCapable;
 	lv2:requiredFeature urid:map;
-	@SIGNATURE@;
+	@SIGNATURE@
 
 	lv2:port [
 		a atom:AtomPort, lv2:InputPort;

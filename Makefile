@@ -157,7 +157,7 @@ GLUILIBS+=$(LIC_LOADLIBES)
 
 
 ifneq ($(LIC_CFLAGS),)
-	SIGNATURE=lv2:extensionData <http:\\/\\/harrisonconsoles.com\\/lv2\\/license\#interface>
+	SIGNATURE=lv2:extensionData <http:\\/\\/harrisonconsoles.com\\/lv2\\/license\#interface>\\;
   override CXXFLAGS += -I$(RW)
 endif
 
