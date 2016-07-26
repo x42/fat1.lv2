@@ -1,0 +1,6 @@
+/build
+*.dSYM
+
+*.swp
+cscope.*
+tags
