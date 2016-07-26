@@ -70,6 +70,9 @@ ifneq ($(XWIN),)
   override LDFLAGS += -static-libgcc -static-libstdc++
 endif
 
+ifeq ($(EXTERNALUI), yes)
+  UI_TYPE=
+endif
 
 ifeq ($(UI_TYPE),)
   UI_TYPE=kx:Widget

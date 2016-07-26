@@ -1,6 +1,7 @@
 @prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
-@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix kx:    <http://kxstudio.sf.net/ns/lv2ext/external-ui#> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 
 <http://gareus.org/oss/lv2/fat1>
