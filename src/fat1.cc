@@ -56,6 +56,10 @@ typedef struct {
 	int midimask;
 	int midichan;
 	float latency;
+
+	uint32_t noteset_update_interval;
+	uint32_t noteset_update_counter;
+	int      noteset;
 } Fat1;
 
 
@@ -160,6 +164,8 @@ instantiate (const LV2_Descriptor*     descriptor,
 	} else {
 		self->latency = 4096;
 	}
+	self->noteset_update_interval = rate / 20;
+	self->noteset_update_counter = self->noteset_update_interval;
 	return (LV2_Handle)self;
 }
 
@@ -247,9 +253,16 @@ run (LV2_Handle instance, uint32_t n_samples)
 	/* process */
 	self->retuner->process (n_samples, self->port [FAT_INPUT], self->port [FAT_OUTPUT]);
 
+	self->noteset_update_counter += n_samples;
+
+	if (self->noteset_update_counter > self->noteset_update_interval) {
+		self->noteset = self->retuner->get_noteset ();
+		self->noteset_update_counter = 0;
+	}
+
 	/* report */
 	*self->port [FAT_MASK] = notes;
-	*self->port [FAT_NSET] = self->retuner->get_noteset ();
+	*self->port [FAT_NSET] = self->noteset;
 	*self->port [FAT_ERRR] = self->retuner->get_error ();
 }
 
