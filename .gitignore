@@ -1,4 +1,5 @@
 /build
+/x42
 *.dSYM
 
 *.swp

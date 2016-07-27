@@ -1,5 +1,5 @@
-fat1.lv2 - AutoTuner-1
-======================
+fat1.lv2 - AutoTune-1
+=====================
 
 fat1.lv2 is an auto-tuner based on Fons Adriaensen's zita-at1.
 
