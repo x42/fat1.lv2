@@ -230,11 +230,7 @@ static void prepare_faceplates (Fat1UI* ui) {
 #undef RESPLABLEL
 }
 
-static void dial_annotation (RobTkDial* d, cairo_t* cr, void* data) {
-	Fat1UI* ui = (Fat1UI*) (data);
-	char txt[16];
-	snprintf (txt, 16, "%+5.1f", d->cur);
-
+static void display_annotation (Fat1UI*ui, RobTkDial* d, cairo_t* cr, const char* txt) {
 	int tw, th;
 	cairo_save (cr);
 	PangoLayout* pl = pango_cairo_create_layout (cr);
@@ -243,7 +239,7 @@ static void dial_annotation (RobTkDial* d, cairo_t* cr, void* data) {
 	pango_layout_get_pixel_size (pl, &tw, &th);
 	cairo_translate (cr, d->w_width / 2, d->w_height - 2);
 	cairo_translate (cr, -tw / 2.0, -th);
-	cairo_set_source_rgba (cr, .0, .0, .0, .5);
+	cairo_set_source_rgba (cr, .0, .0, .0, .7);
 	rounded_rectangle (cr, -1, -1, tw+3, th+1, 3);
 	cairo_fill (cr);
 	CairoSetSouerceRGBA (c_wht);
@@ -251,6 +247,20 @@ static void dial_annotation (RobTkDial* d, cairo_t* cr, void* data) {
 	g_object_unref (pl);
 	cairo_restore (cr);
 	cairo_new_path (cr);
+}
+
+static void dial_annotation_hz (RobTkDial* d, cairo_t* cr, void* data) {
+	Fat1UI* ui = (Fat1UI*) (data);
+	char txt[16];
+	snprintf (txt, 16, "%5.1f Hz", d->cur);
+	display_annotation (ui, d, cr, txt);
+}
+
+static void dial_annotation_val (RobTkDial* d, cairo_t* cr, void* data) {
+	Fat1UI* ui = (Fat1UI*) (data);
+	char txt[16];
+	snprintf (txt, 16, "%+5.0f ct", d->cur * 100.f);
+	display_annotation (ui, d, cr, txt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -571,6 +581,7 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		ui->spn_ctrl[i] = robtk_dial_new_with_size (
 				k_min (i), k_max (i), k_step(i),
 				GED_WIDTH + 8, GED_HEIGHT + 20, GED_CX + 4, GED_CY + 15, GED_RADIUS);
+		ui->spn_ctrl[i]->with_scroll_accel = false;
 
 		robtk_dial_set_callback (ui->spn_ctrl[i], cb_spn_ctrl, ui);
 		robtk_dial_set_value (ui->spn_ctrl[i], ctrl_to_gui (i, ctrl_range[i].dflt));
@@ -584,8 +595,44 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 3, 4, 5, 0, RTK_EXANDF, RTK_SHRINK);
 	}
 
-	robtk_dial_annotation_callback (ui->spn_ctrl[0], dial_annotation, ui);
-	robtk_dial_annotation_callback (ui->spn_ctrl[4], dial_annotation, ui);
+	ui->spn_ctrl[1]->displaymode = 3; // use dots
+	ui->spn_ctrl[2]->displaymode = 3;
+
+	/* these numerics are meaningful */
+	robtk_dial_annotation_callback (ui->spn_ctrl[0], dial_annotation_hz, ui);
+	robtk_dial_annotation_callback (ui->spn_ctrl[4], dial_annotation_val, ui);
+
+	/* some custom colors */
+	{
+		const float c_bg[4] = {.2, .2, .3, 1.0};
+		create_dial_pattern (ui->spn_ctrl[0], c_bg);
+	}
+	{
+		const float c_bg[4] = {.4, .4, .45, 1.0};
+		create_dial_pattern (ui->spn_ctrl[1], c_bg);
+		create_dial_pattern (ui->spn_ctrl[2], c_bg);
+		// black dot
+		ui->spn_ctrl[1]->dcol[0][0] =
+			ui->spn_ctrl[1]->dcol[0][1] =
+			ui->spn_ctrl[1]->dcol[0][2] =
+			ui->spn_ctrl[2]->dcol[0][0] =
+			ui->spn_ctrl[2]->dcol[0][1] =
+			ui->spn_ctrl[2]->dcol[0][2] = .1;
+	}
+	{
+		const float c_bg[4] = {.2, .7, .2, 1.0};
+		create_dial_pattern (ui->spn_ctrl[3], c_bg);
+		ui->spn_ctrl[3]->dcol[0][0] =
+			ui->spn_ctrl[3]->dcol[0][1] =
+			ui->spn_ctrl[3]->dcol[0][2] = .05;
+	}
+	{
+		const float c_bg[4] = {.7, .7, .0, 1.0};
+		create_dial_pattern (ui->spn_ctrl[4], c_bg);
+		ui->spn_ctrl[4]->dcol[0][0] =
+			ui->spn_ctrl[4]->dcol[0][1] =
+			ui->spn_ctrl[4]->dcol[0][2] = .05;
+	}
 
 	/* mode + midi channel */
 	ui->sel_mchn = robtk_select_new ();
