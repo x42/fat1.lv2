@@ -31,6 +31,8 @@
 #include "fat1.h"
 #include "retuner.h"
 
+static pthread_mutex_t fftw_planner_lock = PTHREAD_MUTEX_INITIALIZER;
+
 typedef struct {
 	LV2_URID atom_Sequence;
 } MidiMapURIs;
@@ -148,7 +150,9 @@ instantiate (const LV2_Descriptor*     descriptor,
 		return NULL;
 	}
 
+	pthread_mutex_lock(&fftw_planner_lock);
 	self->retuner = new LV2AT::Retuner (rate);
+	pthread_mutex_unlock(&fftw_planner_lock);
 
 	self->notemask = 0xfff;
 	self->midichan = -1;
@@ -270,7 +274,9 @@ static void
 cleanup (LV2_Handle instance)
 {
 	Fat1* self = (Fat1*)instance;
+	pthread_mutex_lock(&fftw_planner_lock);
 	delete self->retuner;
+	pthread_mutex_unlock(&fftw_planner_lock);
 	free (instance);
 }
 
