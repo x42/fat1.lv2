@@ -51,4 +51,5 @@ static const RtkLv2Description _plugin = {
 	, 4 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
+	, 25 // uint32_t latency_ctrl_port
 };
