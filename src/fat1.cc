@@ -131,7 +131,7 @@ instantiate (const LV2_Descriptor*     descriptor,
              const LV2_Feature* const* features)
 {
 	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
-	LV2_URID_Map* map;
+	LV2_URID_Map* map = NULL;
 
 	int i;
 	for (i=0; features[i]; ++i) {
