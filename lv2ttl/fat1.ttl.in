@@ -23,7 +23,7 @@
 	a lv2:Plugin, doap:Project, lv2:WaveshaperPlugin;
 	doap:license <http://usefulinc.com/doap/licenses/gpl>;
 	doap:maintainer <http://gareus.org/rgareus#me>;
-	doap:name "Autotuner";
+	doap:name "Autotune";
 	@VERSION@
   @UITTL@
 	lv2:optionalFeature lv2:hardRTCapable;

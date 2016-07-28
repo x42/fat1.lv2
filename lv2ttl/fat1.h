@@ -9,7 +9,7 @@ static const RtkLv2Description _plugin = {
 	&lv2ui_descriptor
 	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
-	, "Autotuner" // const char *plugin_human_id
+	, "Autotune" // const char *plugin_human_id
 	, (const struct LV2Port[26])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
