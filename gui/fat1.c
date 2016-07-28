@@ -591,8 +591,8 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 
 		robtk_dial_set_scaled_surface_scale (ui->spn_ctrl[i], ui->dial_bg[i], 2.0);
 	
-		rob_table_attach (ui->ctbl, GSP_W (ui->spn_ctrl[i]), i + 1, i + 2, 0, 3, 5, 0, RTK_EXANDF, RTK_SHRINK);
-		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 3, 4, 5, 0, RTK_EXANDF, RTK_SHRINK);
+		rob_table_attach (ui->ctbl, GSP_W (ui->spn_ctrl[i]), i + 1, i + 2, 0, 4, 0, 0, RTK_EXANDF, RTK_SHRINK);
+		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 4, 5, 0, 0, RTK_EXANDF, RTK_SHRINK);
 	}
 
 	ui->spn_ctrl[1]->displaymode = 3; // use dots
@@ -657,10 +657,11 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	ui->lbl_mode = robtk_lbl_new ("Mode");
 	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.");
 
-	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 0, 1, 5, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 0, 1, 1, 2, 5, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mchn), 0, 1, 2, 3, 5, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mchn), 0, 1, 3, 4, 5, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 0, 1, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 0, 1, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
+
+	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mchn), 0, 1, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mchn), 0, 1, 3, 4, 2, 0, RTK_EXANDF, RTK_SHRINK);
 
 	/* top-level packing */
 	rob_hbox_child_pack (ui->rw, ui->m0, TRUE, TRUE);
