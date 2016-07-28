@@ -221,8 +221,8 @@ endif
 
 
 DSP_SRC = src/$(LV2NAME).cc src/retuner.cc src/resampler.cc src/resampler-table.cc
-DSP_DEPS = $(DSP_SRC) src/retuner.h src/resampler.h src/resampler-table.h
-GUI_DEPS = gui/$(LV2NAME).c
+DSP_DEPS = $(DSP_SRC) src/$(LV2NAME).h src/retuner.h src/resampler.h src/resampler-table.h
+GUI_DEPS = gui/$(LV2NAME).c src/$(LV2NAME).h
 
 $(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) Makefile
 	@mkdir -p $(BUILDDIR)
