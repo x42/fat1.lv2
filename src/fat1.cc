@@ -181,7 +181,7 @@ connect_port (LV2_Handle instance,
 	Fat1* self = (Fat1*)instance;
 
 	if (port == FAT_MIDI_IN) {
-			self->midiin = (const LV2_Atom_Sequence*)data;
+		self->midiin = (const LV2_Atom_Sequence*)data;
 	} else if (port < FAT_LAST) {
 		self->port[port] = (float*) data;
 	}
