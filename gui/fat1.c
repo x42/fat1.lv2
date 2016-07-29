@@ -86,6 +86,10 @@ typedef struct {
 	uint32_t set;
 	float    err;
 
+	int key_note;
+	int key_mod;
+	int key_majmin;
+
 	const char* nfo;
 } Fat1UI;
 
@@ -302,6 +306,197 @@ static bool cb_mode (RobWidget* w, void* handle) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/*** scale overlay display ****/
+static void keysel_apply (Fat1UI* ui)
+{
+	int k = 0;
+	switch (ui->key_note) {
+		case 0: k = 12; break;
+		case 1: k = 10; break;
+		case 2: k = 8; break;
+		case 3: k = 7; break;
+		case 4: k = 5; break;
+		case 5: k = 3; break;
+		case 6: k = 1; break;
+		case 7:
+			for (uint32_t n = 0; n < 12; ++n) {
+				float val = 1.0;
+				ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+			}
+			return;
+		default:
+			return;
+	}
+
+	if (ui->key_mod == 1) { k += 11; }
+	if (ui->key_mod == 2) { ++k; }
+	if (ui->key_majmin == 1) { k += 9; }
+
+	static const float western[12] = { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1 };
+
+	for (uint32_t n = 0; n < 12; ++n) {
+		float val = western [ (n + k) % 12 ];
+		ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+	}
+}
+
+static bool keysel_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev) {
+	Fat1UI* ui = (Fat1UI*)rw->top;
+	cairo_save(cr);
+	rw->resized = TRUE;
+	rcontainer_expose_event (rw, cr, ev);
+	cairo_restore(cr);
+
+	cairo_rectangle (cr, ev->x, ev->y, ev->width, ev->height);
+  cairo_set_source_rgba (cr, 0, 0, 0, .7);
+	cairo_fill (cr);
+
+	const int nbtn_col = 8;
+	const int nbtn_row = 2;
+	float bt_w = rw->area.width / (float)(nbtn_col * 1.5 + .5);
+	float bt_h = rw->area.height / (float)(nbtn_row * 2 + 1);
+
+	PangoFontDescription *font;
+	static const char scale[16][8] = {
+		"C", "D", "E", "F", "G", "A", "B", "All",
+		"" , "\u266F", "\u266D",  "", "maj", "min", "", "X"
+	};
+
+	font = pango_font_description_from_string("Sans 12px");
+	for (int y = 0; y < nbtn_row; ++y) {
+		for (int x = 0; x < nbtn_col; ++x) {
+			int pos = x + y * nbtn_col;
+
+			if (strlen (scale[pos]) == 0) {
+				continue;
+			}
+
+			float x0 = floor ((.5 + 1.5 * x) * bt_w);
+			float y0 = floor ((1 + 2 * y) * bt_h);
+
+			rounded_rectangle (cr, x0, y0, floor (bt_w), floor (bt_h), 8);
+			CairoSetSouerceRGBA(c_wht);
+			cairo_set_line_width(cr, 1.5);
+			cairo_stroke_preserve (cr);
+
+			const float* color = c_wht;
+
+			if (pos < 8 && pos == ui->key_note) {
+				cairo_set_source_rgba (cr, .0, .8, .0, 1.0);
+			}
+			else if ((pos == 9 && ui->key_mod & 1) || (pos == 10 && ui->key_mod & 2)) {
+				cairo_set_source_rgba (cr, .8, .6, .0, 1.0);
+			}
+			else if ((pos == 12 && ui->key_majmin == 0) || (pos == 13 && ui->key_majmin == 1)) {
+				cairo_set_source_rgba (cr, .1, .1, .8, 1.0);
+			}
+			else if (pos == 7)  {
+				cairo_set_source_rgba (cr, .3, .0, .3, 1.0);
+			}
+			else if (pos == 15)  {
+				cairo_set_source_rgba (cr, .9, .9, .9, 1.0);
+				color = c_blk;
+			}
+			else {
+				cairo_set_source_rgba (cr, .2, .2, .2, 1.0);
+			}
+
+			cairo_fill (cr);
+			cairo_save (cr);
+
+			cairo_scale (cr, rw->widget_scale, rw->widget_scale);
+			write_text_full (cr, scale[pos], font,
+					floor(x0 + bt_w * .5) / rw->widget_scale,
+					floor(y0 + bt_h * .5) / rw->widget_scale,
+					0, 2, color);
+			cairo_restore (cr);
+		}
+	}
+	pango_font_description_free (font);
+
+	return TRUE;
+}
+
+static int keysel_click (RobWidget* rw, RobTkBtnEvent *ev) {
+	Fat1UI* ui = (Fat1UI*)rw->top;
+	const int nbtn_col = 8;
+	const int nbtn_row = 2;
+	float bt_w = rw->area.width / (float)(nbtn_col * 3 + 1);
+	float bt_h = rw->area.height / (float)(nbtn_row * 2 + 1);
+
+	int xp = floor (ev->x / bt_w);
+	int yp = floor (ev->y / bt_h);
+	if ((xp % 3) == 0 || (yp & 1) == 0) {
+		return 0;
+	}
+	const int pos = (xp - 1) / 3 + nbtn_col * (yp - 1) / 2;
+	if (pos < 0 || pos >= nbtn_col * nbtn_row) {
+		return 0;
+	}
+
+	if (pos >= 0 && pos < 8) {
+		ui->key_note = pos;
+		return 1;
+	}
+	else if (pos == 9) {
+		ui->key_mod ^= 1;
+		ui->key_mod &= 1;
+		return 1;
+	}
+	else if (pos == 10) {
+		ui->key_mod ^= 2;
+		ui->key_mod &= 2;
+		return 1;
+	}
+	else if (pos == 12) {
+		ui->key_majmin = 0;
+		return 1;
+	}
+	else if (pos == 13) {
+		ui->key_majmin = 1;
+		return 1;
+	}
+	else if (pos == 15) {
+		return -1;
+	}
+	return 0;
+}
+
+static void keysel_toggle (Fat1UI* ui) {
+	if (ui->ctbl->block_events) {
+		ui->ctbl->block_events = FALSE;
+		ui->ctbl->expose_event = rcontainer_expose_event;
+		ui->ctbl->parent->resized = TRUE; //full re-expose
+		queue_draw (ui->rw);
+	} else {
+		ui->ctbl->expose_event = keysel_overlay;
+		ui->ctbl->block_events = TRUE;
+		ui->ctbl->resized = TRUE;
+		ui->key_note = -1;
+		ui->key_mod = 0;
+		ui->key_majmin = 0;
+		queue_draw (ui->ctbl);
+	}
+}
+
+static RobWidget* keysel_mousedown (RobWidget* rw, RobTkBtnEvent *ev) {
+	if (rw->block_events) {
+		Fat1UI* ui = (Fat1UI*)rw->top;
+		const int rv = (ev->button == 1) ? keysel_click (rw, ev) : 0;
+
+		if (rv == 1) {
+			keysel_apply (ui);
+			queue_draw (ui->ctbl);
+		}
+		else if (rv) {
+			keysel_toggle (ui);
+		}
+	}
+	return rcontainer_mousedown (rw, ev);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 /*** keyboard display ****/
 
 static void
@@ -392,6 +587,9 @@ m0_size_allocate (RobWidget* handle, int w, int h) {
 
 static RobWidget* m0_mouse_up (RobWidget* handle, RobTkBtnEvent* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
+	if (ev->button != 1) {
+		return NULL;
+	}
 	if (ui->disable_signals) {
 		return NULL;
 	}
@@ -413,6 +611,10 @@ static RobWidget* m0_mouse_up (RobWidget* handle, RobTkBtnEvent* ev) {
 	}
 	ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
 	queue_draw (ui->m0);
+	if (ui->ctbl->block_events) {
+		ui->key_note = -1;
+		queue_draw (ui->ctbl);
+	}
 	return NULL;
 }
 
@@ -426,7 +628,14 @@ static void m0_leave (RobWidget* handle) {
 }
 
 static RobWidget* m0_mouse_down (RobWidget* handle, RobTkBtnEvent* ev) {
-	return handle;
+	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
+	if (ev->button == 1) {
+		return handle;
+	}
+	if (ev->button == 3 && robtk_select_get_value (ui->sel_mode) != 1) {
+		keysel_toggle (ui);
+	}
+	return NULL;
 }
 
 static RobWidget* m0_mouse_move (RobWidget* handle, RobTkBtnEvent* ev) {
@@ -460,12 +669,6 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
   get_color_from_theme(1, c);
   cairo_set_source_rgb (cr, c[0], c[1], c[2]);
 	cairo_fill (cr);
-
-#if 0
-	rounded_rectangle (cr, 4, 4, ui->m0_width - 8, ui->m0_height - 8, 9);
-	CairoSetSouerceRGBA (c_blk);
-	cairo_fill (cr);
-#endif
 
 	/* white keys below */
 	for (uint32_t n = 0; n < 12; ++n) {
@@ -509,7 +712,7 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 	cairo_pattern_destroy (pat);
 
 
-	float ex = XPOS(ui->err) - (bw / 2) - 1; 
+	float ex = XPOS(ui->err) - (bw / 2) - 1;
 	cairo_rectangle (cr, ex, by0, bw, bh);
 
 	if (fabsf (ui->err) < .15) {
@@ -571,6 +774,8 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	robwidget_set_leave_notify(ui->m0, m0_leave);
 
 	ui->ctbl = rob_table_new (/*rows*/3, /*cols*/ 7, FALSE);
+	robwidget_set_mousedown (ui->ctbl, keysel_mousedown);
+	ui->ctbl->top = (void*)ui;
 
 #define GSP_W(PTR) robtk_dial_widget (PTR)
 #define GLB_W(PTR) robtk_lbl_widget (PTR)
