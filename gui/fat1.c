@@ -800,8 +800,10 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 4, 5, 0, 0, RTK_EXANDF, RTK_SHRINK);
 	}
 
+	robtk_dial_set_detent_default (ui->spn_ctrl[3], false);
 	ui->spn_ctrl[1]->displaymode = 3; // use dots
 	ui->spn_ctrl[2]->displaymode = 3;
+	ui->spn_ctrl[3]->displaymode = 3;
 
 	/* these numerics are meaningful */
 	robtk_dial_annotation_callback (ui->spn_ctrl[0], dial_annotation_hz, ui);
