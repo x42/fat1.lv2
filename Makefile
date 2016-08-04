@@ -35,6 +35,17 @@ targets=
 
 STRIPFLAGS=-s
 GLUICFLAGS=-I.
+
+ifneq ($(MOD),)
+  BUILDOPENGL=no
+  BUILDJACKAPP=no
+  MODLABEL=mod:label \"x42-autotune\";
+  MODBRAND=mod:brand \"x42\";
+else
+  MODLABEL1=
+  MODBRAND=
+endif
+
 UNAME=$(shell uname)
 ifeq ($(UNAME),Darwin)
   LV2LDFLAGS=-dynamiclib
@@ -91,6 +102,9 @@ ifneq ($(BUILDOPENGL), no)
   targets+=$(BUILDDIR)$(LV2GUI)$(LIB_EXT)
   UITTL=ui:ui $(LV2NAME):ui_gl ;
 endif
+ifneq ($(MOD),)
+  targets+=$(BUILDDIR)modgui
+endif
 
 ###############################################################################
 # extract versions
@@ -103,8 +117,9 @@ ifeq ($(shell pkg-config --exists lv2 || echo no), no)
 endif
 
 ifeq ($(shell pkg-config --exists fftw3f || echo no), no)
-	$(error "fftw3f library was not found")
+  $(error "fftw3f library was not found")
 endif
+
 ifeq ($(shell pkg-config --atleast-version=1.6.0 lv2 || echo no), no)
   $(error "LV2 SDK needs to be version 1.6.0 or later")
 endif
@@ -201,7 +216,7 @@ submodules:
 
 all: submodule_check $(BUILDDIR)manifest.ttl $(BUILDDIR)$(LV2NAME).ttl $(targets) $(JACKAPP)
 
-$(BUILDDIR)manifest.ttl: lv2ttl/manifest.ttl.in lv2ttl/manifest.gui.in Makefile
+$(BUILDDIR)manifest.ttl: lv2ttl/manifest.ttl.in lv2ttl/manifest.gui.in lv2ttl/manifest.modgui.in Makefile
 	@mkdir -p $(BUILDDIR)
 	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@LIB_EXT@/$(LIB_EXT)/" \
 		lv2ttl/manifest.ttl.in > $(BUILDDIR)manifest.ttl
@@ -209,8 +224,12 @@ ifneq ($(BUILDOPENGL), no)
 	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@LIB_EXT@/$(LIB_EXT)/;s/@UI_TYPE@/$(UI_TYPE)/;s/@LV2GUI@/$(LV2GUI)/g" \
 		lv2ttl/manifest.gui.in >> $(BUILDDIR)manifest.ttl
 endif
+ifneq ($(MOD),)
+	sed "s/@LV2NAME@/$(LV2NAME)/g" \
+		lv2ttl/manifest.modgui.in >> $(BUILDDIR)manifest.ttl
+endif
 
-$(BUILDDIR)$(LV2NAME).ttl: lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).gui.in
+$(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).gui.in
 	@mkdir -p $(BUILDDIR)
 	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@SIGNATURE@/$(SIGNATURE)/;s/@VERSION@/lv2:microVersion $(LV2MIC) ;lv2:minorVersion $(LV2MIN) ;/g;s/@UITTL@/$(UITTL)/" \
 		lv2ttl/$(LV2NAME).ttl.in > $(BUILDDIR)$(LV2NAME).ttl
@@ -246,6 +265,9 @@ endif
 
 $(BUILDDIR)$(LV2GUI)$(LIB_EXT): gui/$(LV2NAME).c
 
+$(BUILDDIR)modgui: modgui/
+	@mkdir -p $(BUILDDIR)/modgui
+	cp -r modgui/* $(BUILDDIR)modgui/
 
 ###############################################################################
 # install/uninstall/clean target definitions
@@ -265,12 +287,17 @@ ifneq ($(BUILDJACKAPP), no)
 	install -d $(DESTDIR)$(BINDIR)
 	install -m755 $(APPBLD)x42-fat1$(EXE_EXT) $(DESTDIR)$(BINDIR)
 endif
+ifneq ($(MOD),)
+	install -d $(DESTDIR)$(LV2DIR)/$(BUNDLE)/modgui
+	install -t $(DESTDIR)$(LV2DIR)/$(BUNDLE)/modgui $(BUILDDIR)modgui/*
+endif
 
 uninstall-bin:
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/manifest.ttl
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2NAME).ttl
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2NAME)$(LIB_EXT)
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2GUI)$(LIB_EXT)
+	rm -rf $(DESTDIR)$(LV2DIR)/$(BUNDLE)/modgui
 	rm -f $(DESTDIR)$(BINDIR)/x42-fat1$(EXE_EXT)
 	-rmdir $(DESTDIR)$(LV2DIR)/$(BUNDLE)
 	-rmdir $(DESTDIR)$(BINDIR)
@@ -294,6 +321,7 @@ clean:
 	  $(BUILDDIR)$(LV2GUI)$(LIB_EXT)
 	rm -rf $(BUILDDIR)*.dSYM
 	rm -rf $(APPBLD)x42-*
+	rm -rf $(BUILDDIR)modgui
 	-test -d $(APPBLD) && rmdir $(APPBLD) || true
 	-test -d $(BUILDDIR) && rmdir $(BUILDDIR) || true
 

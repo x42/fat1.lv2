@@ -1,0 +1,293 @@
+@import url(/fonts/nexa/stylesheet.css);
+@import url(/fonts/questrial/stylesheet.css);
+
+
+/* = CONTAINER
+================================================ */
+.mod-pedal-boxy{{{cns}}} {
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:230px 431px;
+    height:431px;
+    position:absolute;
+    width:230px;
+    border-radius: 21px;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune {
+    background-image:url(/resources/tribal1.png{{{ns}}});
+    background-size:421px 431px;
+    width:421px;
+}
+
+/* = PLUGIN'S AUTHOR
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-plugin-brand {
+    left:0;
+    position:absolute;
+    right:0;
+    text-align:center;
+    text-transform:uppercase;
+    top:160px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-plugin-brand h1 {
+    border-color:#000;
+    border-radius:12px;
+    border-style:solid;
+    border-width:4px;
+    display:inline-block;
+    font-family:"Nexa";
+    font-size:32px;
+    padding:3px 9px 0;
+}
+
+
+/* = PLUGIN'S NAME
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-plugin-name {
+    left:30px;
+    overflow:hidden;
+    position:absolute;
+    right:30px;
+    text-align:center;
+    top:340px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-plugin-name h1 {
+    font-family:"Questrial";
+    font-size:21px;
+    line-height:1;
+}
+
+/* = LIGHT ON/OFF
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-light {
+    background-position:center center;
+    background-repeat:no-repeat;
+    height:32px;
+    left:60px;
+    right:0;
+    position:absolute;
+    bottom:75px;
+}
+
+.mod-pedal-boxy{{{cns}}}.mod-one-footswitch-presets .mod-light {
+  top:120px;
+}
+
+
+/* = FOOTSWITCH
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-footswitch {
+    background-image:url(/resources/footswitch.png{{{ns}}});
+    background-position:bottom center;
+    background-repeat:no-repeat;
+    background-size:auto 132px;
+    bottom: 60px;
+    cursor:pointer;
+    height:66px;
+    left: 0;
+    margin: auto;
+    position:absolute;
+    right: 60px;
+    width: 66px;
+}
+.mod-pedal-boxy{{{cns}}} .mod-footswitch.on {
+    background-position-y: top !important
+}
+
+
+/* = KNOBS
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-control-group {
+    margin:20px !important;
+    position:relative;
+    text-align:center;
+    z-index:30;
+}
+.mod-pedal-boxy{{{cns}}} .top {
+    margin-top:0px !important;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob {
+    overflow:hidden;
+    position:relative;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title {
+    bottom:0px;
+    display:block;
+    font-size:11px;
+    font-weight:bold;
+    height:12px;
+    left:0;
+    line-height:1;
+    margin:0;
+    overflow:hidden;
+    padding:0;
+    position:absolute;
+    right:0;
+    text-transform:uppercase;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob .mod-knob-image {
+    background-image:url(/resources/aluminium.png{{{ns}}});
+    background-repeat:no-repeat;
+    background-size:auto 60px;
+    height:60px;
+    width:60px;
+    margin:0 auto;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob {
+    display:inline-block;
+    height:73px;
+		margin: 1px 5px;
+}
+
+/* = ENUMERATED LIST
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-enumerated-group {
+    height:31px;
+    margin:20px auto 0 !important;
+    position:relative;
+    width:190px;
+    z-index:35;
+}
+
+.mod-pedal-boxy{{{cns}}}.mod-three-knobs .mod-enumerated-group,
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-enumerated-group {
+    margin-bottom:5px !important;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-enumerated-group {
+    width:250px;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-enumerated {
+    background-image:url(/resources/dropdown-arrow-black.png{{{ns}}});
+    background-position:right center;
+    background-repeat:no-repeat;
+    font-size:11px;
+    font-weight:bold;
+    left:0;
+    line-height:2;
+    overflow:hidden;
+    position:absolute;
+    right:0;
+    text-align:left;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-selected {
+    background-color:rgba(0,0,0,.3);
+    box-shadow:inset 0 0 4px rgba(0,0,0,.3);
+    border-radius:4px;
+    padding:3px 9px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-selected {
+    border-radius:4px 4px 0 0;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list {
+    display:none;
+    color:#fff;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list {
+    background-color:rgba(0,0,0,.9);
+    display:none;
+    height:115px;
+    overflow:auto;
+    position:relative;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list > div {
+    padding:3px 9px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list > div:hover {
+    background-color:rgba(255,255,255,.2);
+    cursor:pointer;
+}
+
+/* = Piano
+================================================ */
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard {
+	background-color:black;
+	margin: 20px auto;
+	position:relative;
+	overflow:hidden;
+	padding:0 0 2px 3px;
+	width:368px;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key {
+	float: left;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-white {
+	background-color:#fff;
+	border-radius: 0 0 4px 4px;
+	height: 140px;
+	margin: 0 2px 2px 0;
+	position: relative;
+	width: 50px;
+	z-index:50;
+}
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-white.on {
+	background: #f4f3f3 none repeat scroll 0 0;
+	box-shadow: 2px 2px 3px #999 inset, -3px 2px 3px #999 inset;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black {
+	width: 0px;
+	height: 91px;
+	margin: 0;
+}
+
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black.on::after {
+	background-color:#000;
+	border-radius: 0 0 4px 4px;
+	box-shadow: 2px 2px 2px 2px #888;
+	content: "";
+	display: block;
+	height: 89px;
+	position: relative;
+	width: 32px;
+	left: -18px;
+	top: -2px;
+	z-index:51;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black.off::after {
+	background-color:#111;
+	border-radius: 0 0 4px 4px;
+	box-shadow: 2px 2px 0 #999;
+	content: "";
+	display: block;
+	height: 91px;
+	position: relative;
+	width: 32px;
+	left: -18px;
+	top: -2px;
+	z-index:51;
+}
+
+/* = COLORS
+================================================ */
+
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune h1,
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-enumerated,
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob > span.mod-knob-title
+{
+    color:black;
+}
+.mod-pedal-boxy{{{cns}}}.x42-autotune h1
+{
+    border-color:black;
+}
