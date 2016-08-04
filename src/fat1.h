@@ -11,8 +11,9 @@ typedef enum {
 	FAT_CORR,
 	FAT_OFFS, // 9
 
-	FAT_NOTE = 10, // + 12 notes
-	FAT_MASK = 22,
+	FAT_NOTE, // + 12 notes
+	FAT_PANIC = 22,
+	FAT_MASK,
 	FAT_NSET,
 	FAT_ERRR,
 	FAT_LTNC,

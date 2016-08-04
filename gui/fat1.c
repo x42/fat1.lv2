@@ -68,6 +68,7 @@ typedef struct {
 	RobTkDial* spn_ctrl[5];
 	RobTkLbl*  lbl_ctrl[5];
 
+	RobTkPBtn*   btn_panic;
 	RobTkLbl*    lbl_mode;
 	RobTkLbl*    lbl_mchn;
 	RobTkSelect* sel_mode;
@@ -298,9 +299,24 @@ static bool cb_mode (RobWidget* w, void* handle) {
 	Fat1UI* ui = (Fat1UI*)handle;
 	const float val = robtk_select_get_value (ui->sel_mode);
 	robtk_select_set_sensitive (ui->sel_mchn, val != 2);
+	robtk_pbtn_set_sensitive (ui->btn_panic, val != 2);
 	if (ui->disable_signals) return TRUE;
 	ui->write (ui->controller, FAT_MODE, sizeof (float), 0, (const void*) &val);
 	queue_draw (ui->m0);
+	return TRUE;
+}
+
+static bool cb_btn_panic_on (RobWidget *w, void* handle) {
+	Fat1UI* ui = (Fat1UI*)handle;
+	float val = 1.f;
+	ui->write (ui->controller, FAT_PANIC, sizeof (float), 0, (const void*) &val);
+	return TRUE;
+}
+
+static bool cb_btn_panic_off (RobWidget *w, void* handle) {
+	Fat1UI* ui = (Fat1UI*)handle;
+	float val = 0.0;
+	ui->write (ui->controller, FAT_PANIC, sizeof (float), 0, (const void*) &val);
 	return TRUE;
 }
 
@@ -863,12 +879,16 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 
 	ui->lbl_mode = robtk_lbl_new ("Mode");
 	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.");
+	ui->btn_panic = robtk_pbtn_new ("MIDI Panic");
+	robtk_pbtn_set_callback_up (ui->btn_panic, cb_btn_panic_off, ui);
+	robtk_pbtn_set_callback_down (ui->btn_panic, cb_btn_panic_on, ui);
 
 	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 0, 1, 2, 0, RTK_EXANDF, RTK_SHRINK);
 	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 0, 1, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
 
-	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mchn), 0, 1, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mchn), 0, 1, 2, 3, 2, 0, RTK_EXANDF, RTK_SHRINK);
 	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mchn), 0, 1, 3, 4, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, robtk_pbtn_widget (ui->btn_panic), 0, 1, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
 
 	/* top-level packing */
 	rob_hbox_child_pack (ui->rw, ui->m0, TRUE, TRUE);
@@ -885,6 +905,7 @@ static void gui_cleanup (Fat1UI* ui) {
 
 	robtk_lbl_destroy (ui->lbl_mode);
 	robtk_lbl_destroy (ui->lbl_mchn);
+	robtk_pbtn_destroy (ui->btn_panic);
 	robtk_select_destroy (ui->sel_mode);
 	robtk_select_destroy (ui->sel_mchn);
 
@@ -963,6 +984,10 @@ port_event (LV2UI_Handle handle,
 {
 	Fat1UI* ui = (Fat1UI*)handle;
 	if (format != 0 || port_index <= FAT_OUTPUT) return;
+
+	if (port_index == FAT_PANIC) {
+		return;
+	}
 
 	const float v = *(float*)buffer;
 	ui->disable_signals = true;

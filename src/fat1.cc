@@ -206,6 +206,10 @@ run (LV2_Handle instance, uint32_t n_samples)
 		self->midichan = mchn - 1;
 	}
 
+	if (*self->port [FAT_PANIC] > 0) {
+		clear_midimask (self);
+	}
+
 	int mode = rint (*self->port [FAT_MODE]);
 	if (mode < 0) mode = 0;
 	if (mode > 2) mode = 2;
