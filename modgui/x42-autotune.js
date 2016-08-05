@@ -2,15 +2,26 @@ function (event) {
 
 	/* top-level entry, called from mod-ui */
 	if (event.type == 'start') {
-		var pk = event.icon.find ('[mod-role=piano-keyboard]');
-
 		var ports = event.ports;
 		for (var p in ports) {
-			// ports[p].symbol, ports[p].value;
+			if (ports[p].symbol == 'mode') {
+				var pk = event.icon.find ('[mod-role=piano-keyboard]');
+				if (event.value == 1) {
+					pk.css('display', 'none');
+				} else {
+					pk.css('display', 'block');
+				}
+			}
 		}
 	}
 	else if (event.type == 'change') {
-		var pk = event.icon.find ('[mod-role=piano-keyboard]');
-		// event.symbol, event.value
+		if (event.symbol == 'mode') {
+			var pk = event.icon.find ('[mod-role=piano-keyboard]');
+			if (event.value == 1) {
+				pk.css('display', 'none');
+			} else {
+				pk.css('display', 'block');
+			}
+		}
 	}
 }

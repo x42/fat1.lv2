@@ -4,57 +4,49 @@
 
 /* = CONTAINER
 ================================================ */
-.mod-pedal-boxy{{{cns}}} {
+.mod-pedal-boxy{{{cns}}}.x42-autotune {
+    background-image:url(/resources/x42-fat1.png{{{ns}}});
     background-position:center center;
     background-repeat:no-repeat;
-    background-size:230px 431px;
+    background-size:421px 431px;
+    border-radius: 21px;
     height:431px;
     position:absolute;
-    width:230px;
-    border-radius: 21px;
-}
-
-.mod-pedal-boxy{{{cns}}}.x42-autotune {
-    background-image:url(/resources/tribal1.png{{{ns}}});
-    background-size:421px 431px;
     width:421px;
 }
 
-/* = PLUGIN'S AUTHOR
+/* = Labels
 ================================================ */
-.mod-pedal-boxy{{{cns}}} .mod-plugin-brand {
-    left:0;
+.mod-pedal-boxy{{{cns}}}.x42-autotune .x42-brand {
+    left: 40px;
     position:absolute;
-    right:0;
     text-align:center;
-    text-transform:uppercase;
-    top:160px;
+    bottom: 50px;
+    width: 25px;
+    cursor:default;
 }
 
-.mod-pedal-boxy{{{cns}}} .mod-plugin-brand h1 {
-    border-color:#000;
-    border-radius:12px;
-    border-style:solid;
-    border-width:4px;
-    display:inline-block;
+.mod-pedal-boxy{{{cns}}}.x42-autotune .x42-brand h1 {
     font-family:"Nexa";
-    font-size:32px;
-    padding:3px 9px 0;
+    font-size:28px;
+    padding:0;
+    margin:0;
+    color:#aaa;
+    transform: rotate(270deg);
+		-webkit-transform: rotate(270deg);
+    text-shadow: -2px 2px 2px #444;
 }
 
-
-/* = PLUGIN'S NAME
-================================================ */
-.mod-pedal-boxy{{{cns}}} .mod-plugin-name {
-    left:30px;
+.mod-pedal-boxy{{{cns}}}.x42-autotune .x42-plugin-name {
     overflow:hidden;
     position:absolute;
-    right:30px;
+    right:38px;
     text-align:center;
-    top:340px;
+    bottom:48px;
+    text-shadow: 0 0 1px #ccc;
 }
 
-.mod-pedal-boxy{{{cns}}} .mod-plugin-name h1 {
+.mod-pedal-boxy{{{cns}}}.x42-autotune .x42-plugin-name h1 {
     font-family:"Questrial";
     font-size:21px;
     line-height:1;
@@ -66,10 +58,10 @@
     background-position:center center;
     background-repeat:no-repeat;
     height:32px;
-    left:60px;
-    right:0;
+    left:20px;
+    right:20px;
     position:absolute;
-    bottom:75px;
+    bottom:95px;
 }
 
 .mod-pedal-boxy{{{cns}}}.mod-one-footswitch-presets .mod-light {
@@ -84,24 +76,24 @@
     background-position:bottom center;
     background-repeat:no-repeat;
     background-size:auto 132px;
-    bottom: 60px;
+    bottom: 39px;
     cursor:pointer;
     height:66px;
-    left: 0;
+    left: 20px;
+    right: 20px;
     margin: auto;
     position:absolute;
-    right: 60px;
     width: 66px;
 }
 .mod-pedal-boxy{{{cns}}} .mod-footswitch.on {
-    background-position-y: top !important
+    background-position: top center !important;
 }
 
 
 /* = KNOBS
 ================================================ */
 .mod-pedal-boxy{{{cns}}} .mod-control-group {
-    margin:20px !important;
+    margin:20px 20px 5px 20px !important;
     position:relative;
     text-align:center;
     z-index:30;
@@ -116,7 +108,7 @@
 }
 
 .mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title {
-    bottom:0px;
+    bottom:12px;
     display:block;
     font-size:11px;
     font-weight:bold;
@@ -129,6 +121,17 @@
     position:absolute;
     right:0;
     text-transform:uppercase;
+    cursor:default;
+}
+
+.mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob .mod-knob-value {
+    bottom:0px;
+    font-size:11px;
+    position:absolute;
+    line-height:1;
+    left:0;
+    right:0;
+    z-index:60;
 }
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob .mod-knob-image {
@@ -142,7 +145,7 @@
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .mod-control-group .mod-knob {
     display:inline-block;
-    height:73px;
+    height:88px;
 		margin: 1px 5px;
 }
 
@@ -186,17 +189,9 @@
     padding:3px 9px;
 }
 
-.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-selected {
-    border-radius:4px 4px 0 0;
-}
-
-.mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list {
-    display:none;
-    color:#fff;
-}
-
 .mod-pedal-boxy{{{cns}}} .mod-enumerated .mod-enumerated-list {
     background-color:rgba(0,0,0,.9);
+    color:#fff;
     display:none;
     height:115px;
     overflow:auto;
@@ -217,7 +212,7 @@
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard {
 	background-color:black;
-	margin: 20px auto;
+	margin: 5px auto;
 	position:relative;
 	overflow:hidden;
 	padding:0 0 2px 3px;
@@ -226,6 +221,7 @@
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key {
 	float: left;
+	box-shadow: 0 2px 2px 1px #999 inset;
 }
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-white {
@@ -238,41 +234,40 @@
 	z-index:50;
 }
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-white.on {
-	background: #f4f3f3 none repeat scroll 0 0;
-	box-shadow: 2px 2px 3px #999 inset, -3px 2px 3px #999 inset;
+	background: #efedee none repeat scroll 0 0;
+	box-shadow: 2px 2px 3px 1px #999 inset, -3px 2px 3px 1px #999 inset;
 }
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black {
-	width: 0px;
-	height: 91px;
+	width: 0;
 	margin: 0;
 }
 
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black.on::after {
-	background-color:#000;
+	background-color:#111;
 	border-radius: 0 0 4px 4px;
-	box-shadow: 2px 2px 2px 2px #888;
+	box-shadow: -1px 0 1px 0 #777, 2px  0px 2px 0 #888, 0 5px 0 3px #000;
 	content: "";
 	display: block;
-	height: 89px;
+	height: 84px;
 	position: relative;
-	width: 32px;
-	left: -18px;
+	width: 30px;
+	left: -16px;
 	top: -2px;
 	z-index:51;
 }
 
 .mod-pedal-boxy{{{cns}}}.x42-autotune .pianokeyboard .key-black.off::after {
-	background-color:#111;
+	background-color:#222;
 	border-radius: 0 0 4px 4px;
-	box-shadow: 2px 2px 0 #999;
+	box-shadow: -2px 1px 2px 0px #ddd, 1px 1px 0px 1px #444, 0 3px 0 3px #000;
 	content: "";
 	display: block;
-	height: 91px;
+	height: 86px;
 	position: relative;
-	width: 32px;
-	left: -18px;
+	width: 30px;
+	left: -16px;
 	top: -2px;
 	z-index:51;
 }
