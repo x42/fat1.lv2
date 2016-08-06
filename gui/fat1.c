@@ -579,13 +579,25 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 		}
 		cairo_fill_preserve (cr);
 	}
+#if 0 // highlight key
 	if (ui->set & (1 << n)) {
 		cairo_set_source_rgba (cr, .7, .7, .0, .8);
 		cairo_fill_preserve (cr);
 	}
-
 	cairo_set_source_rgb(cr, 0.0f, 0.0f, 0.0f);
 	cairo_stroke (cr);
+#else // draw dot
+	cairo_set_source_rgb(cr, 0.0f, 0.0f, 0.0f);
+	cairo_stroke (cr);
+	if (ui->set & (1 << n)) {
+		const float rad = ui->pk[1].w * .44;
+		cairo_arc (cr, ui->pk[n].x + .5 * ui->pk[n].w, ui->pk[n].h * .95 - rad, rad, 0, 2 * M_PI);
+		cairo_set_source_rgba (cr, .5, .5, .5, .5);
+		cairo_stroke_preserve (cr);
+		cairo_set_source_rgba (cr, .2, .8, .2, .95);
+		cairo_fill (cr);
+	}
+#endif
 }
 
 
