@@ -91,6 +91,9 @@ typedef struct {
 	int key_mod;
 	int key_majmin;
 
+	int tt_id;
+	cairo_rectangle_t* tt_pos;
+
 	const char* nfo;
 } Fat1UI;
 
@@ -100,6 +103,30 @@ const struct CtrlRange ctrl_range[] = {
 	{ 0.5, .02, 0.1, 200.,  5, true,  "Filter"},
 	{ 0.0, 1.0, 1.0, 0.01,  2, false, "Corr."},
 	{ -2., 2.0, 0.0, 0.01,  5, false, "Offset"},
+};
+
+static const char* tooltips[] = {
+	"<markup><b>Tuning.</b> This sets the frequency correponding to 'A'\n"
+		"(440 Hz in most cases). The exact value is displayed when\n"
+		"this control is touched, and can be set in steps of 0.2 Hz.\n</markup>",
+
+	"<markup><b>Bias.</b> Normally the pitch estimator will select the enabled\n"
+		"note closest to the measured pitch. The Bias control adds\n"
+		"some preference for the current note - this allows it to go\n"
+		"off-tune more than would be the case otherwise.\n</markup>",
+
+	"<markup><b>Filter.</b> This sets the amount of smoothing on the pitch\n"
+		"correction while the current note does not change. If it\n"
+		"does change the filter is bypassed and the correction\n"
+		"jumps immediately to the new value.\n</markup>",
+
+	"<markup><b>Correction.</b> Determines how much of the estimated\n"
+		"pitch error gets corrected. Full correction may remove\n"
+		"expression or vibrato.\n</markup>",
+
+	"<markup><b>Offset.</b> Adds an offset in the range of +/- two\n"
+		"semitones to the pitch correction. With the Correction\n"
+		"control set to zero the result is a constant pitch change.\n</markup>"
 };
 
 float ctrl_to_gui (const uint32_t c, const float v) {
@@ -266,6 +293,65 @@ static void dial_annotation_val (RobTkDial* d, cairo_t* cr, void* data) {
 	char txt[16];
 	snprintf (txt, 16, "%+5.0f ct", d->cur * 100.f);
 	display_annotation (ui, d, cr, txt);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/*** global tooltip overlay ****/
+
+static bool tooltip_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev) {
+	Fat1UI* ui = (Fat1UI*)rw->top;
+	assert (ui->tt_id >= 0 && ui->tt_id < 5);
+
+	cairo_save(cr);
+	rw->resized = TRUE;
+	rcontainer_expose_event (rw, cr, ev);
+	cairo_restore(cr);
+
+	cairo_rectangle (cr, 0, 0, rw->area.width, ui->tt_pos->y + 1);
+  cairo_set_source_rgba (cr, 0, 0, 0, .7);
+	cairo_fill (cr);
+
+	rounded_rectangle (cr, ui->tt_pos->x + 1, ui->tt_pos->y + 1,
+			ui->tt_pos->width + 3, ui->tt_pos->height + 1, 3);
+  cairo_set_source_rgba (cr, 1, 1, 1, .5);
+	cairo_fill (cr);
+
+	const float* color = c_wht;
+	PangoFontDescription *font;
+	font = pango_font_description_from_string("Sans 11px");
+
+	const float xp = rw->area.width * .5;
+	const float yp = rw->area.height * .5;
+
+	cairo_save (cr);
+	cairo_scale (cr, rw->widget_scale, rw->widget_scale);
+	write_text_full (cr, tooltips[ui->tt_id], font,
+			xp / rw->widget_scale, yp / rw->widget_scale,
+			0,  2, color);
+	cairo_restore (cr);
+
+	pango_font_description_free (font);
+	return TRUE;
+
+}
+
+static void ttip_handler (RobTkLbl* d, bool on, void *handle) {
+	Fat1UI* ui = (Fat1UI*)handle;
+	ui->tt_id = -1;
+	for (int i = 0; i < 5; ++i) {
+		if (d == ui->lbl_ctrl[i]) { ui->tt_id = i; break;}
+	}
+	if (on && ui->tt_id >= 0) {
+		ui->tt_pos = &d->rw->area;
+		ui->ctbl->expose_event = tooltip_overlay;
+		ui->ctbl->resized = TRUE;
+		queue_draw (ui->ctbl);
+	} else {
+		ui->ctbl->expose_event = rcontainer_expose_event;
+		ui->ctbl->parent->resized = TRUE; //full re-expose
+		queue_draw (ui->rw);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -827,6 +913,8 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		robtk_dial_set_scroll_mult (ui->spn_ctrl[i], ctrl_range[i].mult);
 
 		robtk_dial_set_scaled_surface_scale (ui->spn_ctrl[i], ui->dial_bg[i], 2.0);
+
+		robtk_lbl_annotation_callback(ui->lbl_ctrl[i], ttip_handler, ui);
 	
 		rob_table_attach (ui->ctbl, GSP_W (ui->spn_ctrl[i]), i + 1, i + 2, 0, 4, 0, 0, RTK_EXANDF, RTK_SHRINK);
 		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 4, 5, 0, 0, RTK_EXANDF, RTK_SHRINK);
