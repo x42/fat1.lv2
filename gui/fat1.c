@@ -533,7 +533,7 @@ calc_keys (Fat1UI* ui)
 		if (n == 1 || n == 3 || n == 6 || n == 8 || n == 10) {
 			ui->pk[n].x = margin + white_key * key_width - black_key_width / 2;
 			ui->pk[n].w = black_key_width;
-			ui->pk[n].h = height / 2;
+			ui->pk[n].h = height / 1.7;
 			ui->pk[n].white = 0;
 			continue;
 		}
@@ -561,9 +561,9 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 		}
 	} else {
 		if (white) {
-			cairo_set_source_rgb (cr, 0.5f, 0.5f, 0.5f);
+			cairo_set_source_rgb (cr, 0.40f, 0.40f, 0.40f);
 		} else {
-			cairo_set_source_rgb (cr, 0.4f, 0.4f, 0.4f);
+			cairo_set_source_rgb (cr, 0.35f, 0.35f, 0.35f);
 		}
 	}
 
@@ -572,7 +572,11 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 	cairo_fill_preserve (cr);
 
 	if (n == ui->hover && robtk_select_get_value (ui->sel_mode) != 1) {
-		cairo_set_source_rgba (cr, .8, .0, .0, .4);
+		if (white && masked) {
+			cairo_set_source_rgba (cr, .5, .5, .5, .3);
+		} else {
+			cairo_set_source_rgba (cr, 1, 1, 1, .3);
+		}
 		cairo_fill_preserve (cr);
 	}
 	if (ui->set & (1 << n)) {
@@ -673,7 +677,7 @@ static RobWidget* m0_mouse_move (RobWidget* handle, RobTkBtnEvent* ev) {
 	return handle;
 }
 
-/*** main drawing function ***/
+/*** main keyboard drawing function ***/
 static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
 
