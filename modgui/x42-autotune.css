@@ -18,31 +18,31 @@
 /* = Labels
 ================================================ */
 .x42-autotune{{{cns}}} .x42-brand {
+    bottom: 50px;
+    cursor:default;
     left: 40px;
     position:absolute;
     text-align:center;
-    bottom: 50px;
     width: 25px;
-    cursor:default;
 }
 
 .x42-autotune{{{cns}}} .x42-brand h1 {
+    color:#aaa;
     font-family:"Nexa";
     font-size:28px;
-    padding:0;
     margin:0;
-    color:#aaa;
-    transform: rotate(270deg);
-		-webkit-transform: rotate(270deg);
+    padding:0;
     text-shadow: -2px 2px 2px #444;
+    transform: rotate(270deg);
+        -webkit-transform: rotate(270deg);
 }
 
 .x42-autotune{{{cns}}} .x42-plugin-name {
+    bottom:48px;
     overflow:hidden;
     position:absolute;
     right:38px;
     text-align:center;
-    bottom:48px;
     text-shadow: 0 0 1px #ccc;
 }
 
@@ -57,11 +57,11 @@
 .x42-autotune{{{cns}}} .mod-light {
     background-position:center center;
     background-repeat:no-repeat;
+    bottom:95px;
     height:32px;
     left:20px;
-    right:20px;
     position:absolute;
-    bottom:95px;
+    right:20px;
 }
 
 /* = FOOTSWITCH
@@ -75,9 +75,9 @@
     cursor:pointer;
     height:66px;
     left: 20px;
-    right: 20px;
     margin: auto;
     position:absolute;
+    right: 20px;
     width: 66px;
 }
 
@@ -105,6 +105,7 @@
 
 .x42-autotune{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title {
     bottom:12px;
+    cursor:default;
     display:block;
     font-size:11px;
     font-weight:bold;
@@ -117,15 +118,14 @@
     position:absolute;
     right:0;
     text-transform:uppercase;
-    cursor:default;
 }
 
 .x42-autotune{{{cns}}} .mod-control-group .mod-knob .mod-knob-value {
     bottom:0px;
     font-size:11px;
-    position:absolute;
-    line-height:1;
     left:0;
+    line-height:1;
+    position:absolute;
     right:0;
     z-index:60;
 }
@@ -142,25 +142,17 @@
 .x42-autotune{{{cns}}} .mod-control-group .mod-knob {
     display:inline-block;
     height:88px;
-		margin: 1px 5px;
+        margin: 1px 5px;
 }
 
 /* = ENUMERATED LIST
 ================================================ */
 .x42-autotune{{{cns}}} .mod-enumerated-group {
     height:31px;
-    margin:20px auto 0 !important;
+    margin:20px auto 5px auto !important;
     position:relative;
-    width:190px;
+    width:100px;
     z-index:35;
-}
-
-.x42-autotune{{{cns}}} .mod-enumerated-group {
-    margin-bottom:5px !important;
-}
-
-.x42-autotune{{{cns}}} .mod-enumerated-group {
-    width:250px;
 }
 
 .x42-autotune{{{cns}}} .mod-enumerated {
@@ -174,7 +166,7 @@
     overflow:hidden;
     position:absolute;
     right:0;
-    text-align:left;
+    text-align:center;
 }
 
 .x42-autotune{{{cns}}} .mod-enumerated .mod-enumerated-selected {
@@ -204,113 +196,106 @@
 
 /* = Piano
 ================================================ */
-
 .x42-autotune{{{cns}}} .pianokeyboard {
-	background-color:black;
-	margin: 5px auto;
-	position:relative;
-	overflow:hidden;
-	padding:0 0 2px 3px;
-	width:368px;
+    background-color:black;
+    margin: 5px auto;
+    position:relative;
+    overflow:hidden;
+    padding:0 0 2px 3px;
+    width:368px;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key {
-	float: left;
-	box-shadow: 0 2px 2px 1px #999 inset;
+    float: left;
+    box-shadow: 0 2px 2px 1px #999 inset;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .active,
 .x42-autotune{{{cns}}} .pianokeyboard .active:after {
-	background-image:url(/resources/active_note.png{{{ns}}});
-	background-position:center bottom 10px;
-	background-repeat:no-repeat;
+    background-image:url(/resources/active_note.png{{{ns}}});
+    background-position:center bottom 10px;
+    background-repeat:no-repeat;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .active:after {
-	background-size:20px 20px;
+    background-size:20px 20px;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.off.midion::after,
 .x42-autotune{{{cns}}} .pianokeyboard .active.on:after {
-	background-position:center bottom 7px;
+    background-position:center bottom 7px;
 }
 
-.x42-autotune{{{cns}}} .pianokeyboard .key-black.on.midioff::after
-{
-	background-position:center bottom 10px !important;
+.x42-autotune{{{cns}}} .pianokeyboard .key-black.on.midioff::after {
+    background-position:center bottom 10px !important;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-white {
-	background-color:#fff;
-	border-radius: 0 0 4px 4px;
-	height: 140px;
-	margin: 0 2px 2px 0;
-	position: relative;
-	width: 50px;
-	z-index:50;
+    background-color:#fff;
+    border-radius: 0 0 4px 4px;
+    height: 140px;
+    margin: 0 2px 2px 0;
+    position: relative;
+    width: 50px;
+    z-index:50;
 }
 
-.x42-autotune{{{cns}}} .pianokeyboard .key-white.on.midioff
-{
-	background-color:#fff;
-	box-shadow: 0 2px 2px 1px #999 inset;
-	top: 0px;
+.x42-autotune{{{cns}}} .pianokeyboard .key-white.on.midioff {
+    background-color:#fff;
+    box-shadow: 0 2px 2px 1px #999 inset;
+    top: 0px;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-white.midion,
 .x42-autotune{{{cns}}} .pianokeyboard .key-white.on {
-	background-color: #efedee;
-	box-shadow: 2px 2px 3px 1px #999 inset, -3px 2px 3px 1px #999 inset;
-	top: -1px;
+    background-color: #efedee;
+    box-shadow: 2px 2px 3px 1px #999 inset, -3px 2px 3px 1px #999 inset;
+    top: -1px;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-black {
-	width: 0;
-	margin: 0;
+    width: 0;
+    margin: 0;
 }
 
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.off.midion::after,
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.on::after {
-	background-color:#3c3c3c;
-	border-radius: 0 0 4px 4px;
-	box-shadow: -1px 0 1px 0 #666, 1px  0px 3px 0 #888, 0 5px 0 3px #000, 0px 3px 3px 1px #000 inset; // , -3px 2px 3px 0px #666 inset;
-	content: "";
-	display: block;
-	height: 84px;
-	position: relative;
-	width: 30px;
-	left: -16px;
-	top: -2px;
-	z-index:51;
+    background-color:#3c3c3c;
+    border-radius: 0 0 4px 4px;
+    box-shadow: -1px 0 1px 0 #666, 1px  0px 3px 0 #888, 0 5px 0 3px #000, 0px 3px 3px 1px #000 inset; // , -3px 2px 3px 0px #666 inset;
+    content: "";
+    display: block;
+    height: 84px;
+    position: relative;
+    width: 30px;
+    left: -16px;
+    top: -2px;
+    z-index:51;
 }
 
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.on.midioff::after,
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.off::after {
-	background-color:#444;
-	border-radius: 0 0 4px 4px;
-	box-shadow: -2px 1px 2px 0px #ddd, 1px 1px 0px 1px #444, 0 3px 0 3px #000, 2px 0px 3px 0px #999 inset, -3px 0px 3px 0px #333 inset;
-	content: "";
-	display: block;
-	height: 86px;
-	position: relative;
-	width: 30px;
-	left: -16px;
-	top: -2px;
-	z-index:51;
+    background-color:#444;
+    border-radius: 0 0 4px 4px;
+    box-shadow: -2px 1px 2px 0px #ddd, 1px 1px 0px 1px #444, 0 3px 0 3px #000, 2px 0px 3px 0px #999 inset, -3px 0px 3px 0px #333 inset;
+    content: "";
+    display: block;
+    height: 86px;
+    position: relative;
+    width: 30px;
+    left: -16px;
+    top: -2px;
+    z-index:51;
 }
 
 /* = COLORS
 ================================================ */
-
-
 .x42-autotune{{{cns}}} h1,
 .x42-autotune{{{cns}}} .mod-enumerated,
-.x42-autotune{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title
-{
+.x42-autotune{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title {
     color:black;
 }
-.x42-autotune{{{cns}}} h1
-{
+.x42-autotune{{{cns}}} h1 {
     border-color:black;
 }
