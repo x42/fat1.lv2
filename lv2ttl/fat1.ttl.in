@@ -154,7 +154,7 @@
 		lv2:minimum -2.0 ;
 		lv2:maximum  2.0 ;
 		pprop:rangeSteps 400;
-		units:semitone12TET;
+		units:unit units:semitone12TET;
 		rdfs:comment "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change.";
 	] , [
 		a lv2:InputPort ,
