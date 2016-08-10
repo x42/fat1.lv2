@@ -39,7 +39,7 @@ GLUICFLAGS=-I.
 ifneq ($(MOD),)
   BUILDOPENGL=no
   BUILDJACKAPP=no
-  MODLABEL=mod:label \"at1\";
+  MODLABEL=mod:label \"AT1\";
   MODBRAND=mod:brand \"x42\";
 else
   MODLABEL1=
