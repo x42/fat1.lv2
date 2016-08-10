@@ -259,11 +259,11 @@
 }
 
 
-.x42-autotune{{{cns}}} .pianokeyboard .key-black.off.midion::after,
+.x42-autotune{{{cns}}} .pianokeyboard .key-black.off.midion:after,
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.on::after {
     background-color:#3c3c3c;
     border-radius: 0 0 4px 4px;
-    box-shadow: -1px 0 1px 0 #666, 1px  0px 3px 0 #888, 0 5px 0 3px #000, 0px 3px 3px 1px #000 inset; // , -3px 2px 3px 0px #666 inset;
+    box-shadow: -1px 0 1px 0 #666, 1px  0px 3px 0 #888, 0 5px 0 3px #000, 0px 3px 3px 1px #000 inset;
     content: "";
     display: block;
     height: 84px;
@@ -274,7 +274,7 @@
     z-index:51;
 }
 
-.x42-autotune{{{cns}}} .pianokeyboard .key-black.on.midioff::after,
+.x42-autotune{{{cns}}} .pianokeyboard .key-black.on.midioff:after,
 .x42-autotune{{{cns}}} .pianokeyboard .key-black.off::after {
     background-color:#444;
     border-radius: 0 0 4px 4px;
