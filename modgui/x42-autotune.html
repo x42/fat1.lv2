@@ -15,26 +15,26 @@
     </div>
 
     <div class="mod-control-group mod-aluminium top clearfix">
-        <div class="mod-knob">
+        <div class="mod-knob" title="This sets the frequency corresponding to 'A' pitch, in other words the required tuning. This will be the default 440 Hz in most cases.">
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="tuning"></div>
-            <span class="mod-knob-title" title="This sets the frequency corresponding to 'A' pitch, in other words the required tuning. This will be the default 440 Hz in most cases.">Tuning</span>
+            <span class="mod-knob-title">Tuning</span>
             <div class="mod-knob-value" contenteditable="true" mod-role="input-control-value" mod-port-symbol="tuning"></div>
         </div>
-        <div class="mod-knob">
+        <div class="mod-knob" title="Normally the pitch estimator will select the enabled note closest to the measured pitch. The Bias control adds some preference for the current note - this allows it to go off-tune more than would be the case otherwise.">
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="bias"></div>
-            <span class="mod-knob-title" title="Normally the pitch estimator will select the enabled note closest to the measured pitch. The Bias control adds some preference for the current note - this allows it to go off-tune more than would be the case otherwise.">Bias</span>
+            <span class="mod-knob-title">Bias</span>
         </div>
-        <div class="mod-knob">
+        <div class="mod-knob" title="This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value.">
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="filter"></div>
-            <span class="mod-knob-title" title="This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value.">Filter</span>
+            <span class="mod-knob-title">Filter</span>
         </div>
-        <div class="mod-knob">
+        <div class="mod-knob" title="Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato.">
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="corr"></div>
-            <span class="mod-knob-title" title="Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato.">Corr.</span>
+            <span class="mod-knob-title">Corr.</span>
         </div>
-        <div class="mod-knob">
+        <div class="mod-knob" title="Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change.">
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="offset"></div>
-            <span class="mod-knob-title" title="Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change.">Offset</span>
+            <span class="mod-knob-title">Offset</span>
             <div class="mod-knob-value" contenteditable="true" mod-role="input-control-value" mod-port-symbol="offset"></div>
         </div>
     </div>
