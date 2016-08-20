@@ -392,16 +392,9 @@ static bool cb_mode (RobWidget* w, void* handle) {
 	return TRUE;
 }
 
-static bool cb_btn_panic_on (RobWidget *w, void* handle) {
+static bool cb_btn_panic (RobWidget *w, void* handle) {
 	Fat1UI* ui = (Fat1UI*)handle;
-	float val = 1.f;
-	ui->write (ui->controller, FAT_PANIC, sizeof (float), 0, (const void*) &val);
-	return TRUE;
-}
-
-static bool cb_btn_panic_off (RobWidget *w, void* handle) {
-	Fat1UI* ui = (Fat1UI*)handle;
-	float val = 0.0;
+	float val = robtk_pbtn_get_pushed (ui->btn_panic) ? 1.f : 0.f;
 	ui->write (ui->controller, FAT_PANIC, sizeof (float), 0, (const void*) &val);
 	return TRUE;
 }
@@ -984,8 +977,7 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	ui->lbl_mode = robtk_lbl_new ("Mode");
 	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.");
 	ui->btn_panic = robtk_pbtn_new ("MIDI Panic");
-	robtk_pbtn_set_callback_up (ui->btn_panic, cb_btn_panic_off, ui);
-	robtk_pbtn_set_callback_down (ui->btn_panic, cb_btn_panic_on, ui);
+	robtk_pbtn_set_callback (ui->btn_panic, cb_btn_panic, ui);
 
 	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 0, 1, 2, 0, RTK_EXANDF, RTK_SHRINK);
 	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 0, 1, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
