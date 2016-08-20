@@ -34,7 +34,7 @@
     padding:0;
     text-shadow: -2px 2px 2px #444;
     transform: rotate(270deg);
-        -webkit-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
 }
 
 .x42-autotune{{{cns}}} .x42-plugin-name {

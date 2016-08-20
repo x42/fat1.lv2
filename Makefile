@@ -42,7 +42,7 @@ ifneq ($(MOD),)
   MODLABEL=mod:label \"AT1\";
   MODBRAND=mod:brand \"x42\";
 else
-  MODLABEL1=
+  MODLABEL=
   MODBRAND=
 endif
 
