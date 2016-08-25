@@ -106,7 +106,7 @@ const struct CtrlRange ctrl_range[] = {
 };
 
 static const char* tooltips[] = {
-	"<markup><b>Tuning.</b> This sets the frequency correponding to 'A'\n"
+	"<markup><b>Tuning.</b> This sets the frequency corresponding to 'A'\n"
 		"(440 Hz in most cases). The exact value is displayed when\n"
 		"this control is touched, and can be set in steps of 0.2 Hz.\n</markup>",
 
