@@ -27,13 +27,13 @@ APPBLD   = x42/
 
 ###############################################################################
 
-LOADLIBES=-lm
 LV2NAME=fat1
 LV2GUI=fat1UI_gl
 BUNDLE=fat1.lv2
 targets=
 
-STRIPFLAGS=-s
+LOADLIBES=-lm
+LV2UIREQ=
 GLUICFLAGS=-I.
 
 ifneq ($(MOD),)
@@ -111,6 +111,7 @@ endif
 LV2VERSION=$(fat1_VERSION)
 include git2lv2.mk
 
+###############################################################################
 # check for build-dependencies
 ifeq ($(shell pkg-config --exists lv2 || echo no), no)
   $(error "LV2 SDK was not found")
@@ -188,7 +189,7 @@ GLUILIBS+=$(LIC_LOADLIBES)
 
 
 ifneq ($(LIC_CFLAGS),)
-	SIGNATURE=lv2:extensionData <http:\\/\\/harrisonconsoles.com\\/lv2\\/license\#interface>\\;
+  SIGNATURE=lv2:extensionData <http:\\/\\/harrisonconsoles.com\\/lv2\\/license\#interface>\\;
   override CXXFLAGS += -I$(RW)
 endif
 
@@ -199,6 +200,7 @@ JACKCFLAGS+=`pkg-config --cflags jack lv2 pango pangocairo $(PKG_GL_LIBS)`
 JACKLIBS=-lm $(GLUILIBS) $(LIC_LOADLIBES) $(LOADLIBES)
 
 
+###############################################################################
 # build target definitions
 default: all
 
