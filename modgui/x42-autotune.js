@@ -42,7 +42,7 @@ function (event) {
 		}
 		/* midi rulez */
 		for (k = 0; k < 12; ++k) {
-			mask_key (k, (Math.floor(data.nmask) & (1 << k)) != 0 ? -1 : 1);
+			mask_key (k, (Math.floor(data.nmask) & (1 << k)) == 0 ? -1 : 1);
 		}
 	}
 
