@@ -31,14 +31,9 @@ function (event) {
 	}
 
 	function update_midi_mask (data) {
-		if (data['mode'] == 2) {
+		console.log("note mask");
+		if (data.mode == 2 || (data.mode == 0 && data.nmask == 0)) {
 			/* manual mode -- control input applies */
-			for (k = 0; k < 12; ++k) {
-				mask_key (k, 0);
-			}
-			return;
-		}
-		if (data['mode'] == 0 && data['mask'] == 0) {
 			/* auto mode -- control applies IFF no midi notes are set */
 			for (k = 0; k < 12; ++k) {
 				mask_key (k, 0);
@@ -47,13 +42,14 @@ function (event) {
 		}
 		/* midi rulez */
 		for (k = 0; k < 12; ++k) {
-			mask_key (k, (data.mask & (1 << k)) != 0 ? -1 : 1);
+			mask_key (k, (Math.floor(data.nmask) & (1 << k)) != 0 ? -1 : 1);
 		}
 	}
 
 	function update_note_set (data) {
+		console.log("note set");
 		for (k = 0; k < 12; ++k) {
-			set_key (k, data.set & (1 << k));
+			set_key (k, Math.floor(data.nset) & (1 << k));
 		}
 	}
 
@@ -61,18 +57,18 @@ function (event) {
 	if (event.type == 'start') {
 		var ports = event.ports;
 		var data = {};
-		data.mask = 0;
 		data.mode = 0;
-		data.set = 0;
+		data.nmask = 0;
+		data.nset = 0;
 		for (var p in ports) {
 			if (ports[p].symbol == 'mode') {
 				data.mode = event.value;
 			}
-			else if (ports[p].symbol == 'mask') {
-				data.mask = event.value;
+			else if (ports[p].symbol == 'nmask') {
+				data.nmask = event.value;
 			}
-			else if (ports[p].symbol == 'set') {
-				data.set = event.value;
+			else if (ports[p].symbol == 'nset') {
+				data.nset = event.value;
 			}
 		}
 		update_midi_mask (data);
@@ -81,18 +77,19 @@ function (event) {
 		ds.data ('persist', data);
 	}
 	else if (event.type == 'change') {
+		console.log("change:" + event.symbol);
 		var ds = event.icon.find ('[mod-role=drag-handle]');
 		var data = ds.data ('persist');
 		if (event.symbol == 'mode') {
 			data.mode = event.value;
 			update_midi_mask (data);
 		}
-		else if (event.symbol == 'mask') {
-			data.mask = event.value;
+		else if (event.symbol == 'nmask') {
+			data.nmask = event.value;
 			update_midi_mask (data);
 		}
-		else if (event.symbol == 'set') {
-			data.set = event.value;
+		else if (event.symbol == 'nset') {
+			data.nset = event.value;
 			update_note_set (data);
 		}
 		ds.data ('persist', data);
