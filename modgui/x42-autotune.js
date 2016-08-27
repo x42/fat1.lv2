@@ -31,7 +31,6 @@ function (event) {
 	}
 
 	function update_midi_mask (data) {
-		console.log("note mask");
 		if (data.mode == 2 || (data.mode == 0 && data.nmask == 0)) {
 			/* manual mode -- control input applies */
 			/* auto mode -- control applies IFF no midi notes are set */
@@ -42,15 +41,25 @@ function (event) {
 		}
 		/* midi rulez */
 		for (k = 0; k < 12; ++k) {
-			mask_key (k, (Math.floor(data.nmask) & (1 << k)) == 0 ? -1 : 1);
+			mask_key (k, (Math.floor (data.nmask) & (1 << k)) == 0 ? -1 : 1);
 		}
 	}
 
 	function update_note_set (data) {
-		console.log("note set");
 		for (k = 0; k < 12; ++k) {
-			set_key (k, Math.floor(data.nset) & (1 << k));
+			set_key (k, Math.floor (data.nset) & (1 << k));
 		}
+	}
+
+	function update_pitcherror (err) {
+		var bar = event.icon.find ('[mod-role=pitch-error]');
+		if (Math.abs (err) > 0.33) {
+			bar.addClass ('bad');
+		} else {
+			bar.removeClass ('bad');
+		}
+		var pos = 63 + 64 * err;
+		bar.css ('left', pos + 'px'); /* CSS or style? XXX */
 	}
 
 	/* top-level entry, called from mod-ui */
@@ -61,7 +70,10 @@ function (event) {
 		data.nmask = 0;
 		data.nset = 0;
 		for (var p in ports) {
-			if (ports[p].symbol == 'mode') {
+			if (event.symbol == 'error') {
+				update_pitcherror (event.value);
+			}
+			else if (ports[p].symbol == 'mode') {
 				data.mode = event.value;
 			}
 			else if (ports[p].symbol == 'nmask') {
@@ -77,10 +89,13 @@ function (event) {
 		ds.data ('persist', data);
 	}
 	else if (event.type == 'change') {
-		console.log("change:" + event.symbol);
 		var ds = event.icon.find ('[mod-role=drag-handle]');
 		var data = ds.data ('persist');
-		if (event.symbol == 'mode') {
+		if (event.symbol == 'error') {
+			update_pitcherror (event.value);
+			return;
+		}
+		else if (event.symbol == 'mode') {
 			data.mode = event.value;
 			update_midi_mask (data);
 		}

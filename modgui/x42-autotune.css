@@ -145,15 +145,58 @@
         margin: 1px 5px;
 }
 
-/* = ENUMERATED LIST
+/* = TOP-Row (enum + pitch-error bars)
 ================================================ */
-.x42-autotune{{{cns}}} .mod-enumerated-group {
+.x42-autotune{{{cns}}} .at-toprow {
     height:31px;
     margin:20px auto 5px auto !important;
-    position:relative;
-    width:100px;
+    width:300px;
     z-index:35;
 }
+
+.x42-autotune{{{cns}}} .pitcherror,
+.x42-autotune{{{cns}}} .mod-enumerated-group {
+    height:31px;
+    margin:0 10px 0 10px;
+    position:relative;
+    width:130px;
+    float:left;
+}
+
+.x42-autotune{{{cns}}} .pitcherror,
+.x42-autotune{{{cns}}} .mod-enumerated .mod-enumerated-selected {
+    background-color:rgba(0,0,0,.3);
+    box-shadow:inset 0 0 4px rgba(0,0,0,.3);
+    border-radius:4px;
+}
+
+/* = Pitch Error display
+================================================ */
+.x42-autotune{{{cns}}} .pitcherror {
+    background-image:url(/resources/pitcherror.png{{{ns}}});
+    background-position:center;
+    background-repeat:no-repeat;
+    overflow:hidden;
+}
+
+.x42-autotune{{{cns}}} .pitcherror .bar {
+    background:#00ff00;
+    box-shadow: 0px 0px 0px 1px #000;
+    position:absolute;
+    width:3px;
+    margin:0;
+    padding:0;
+    height:31px;
+    top:0px;
+    left:63px;
+}
+
+.x42-autotune{{{cns}}} .pitcherror .bar.bad {
+    background:#ff0000;
+}
+
+/* = ENUMERATED LIST
+================================================ */
 
 .x42-autotune{{{cns}}} .mod-enumerated {
     background-image:url(/resources/dropdown-arrow-black.png{{{ns}}});
@@ -170,9 +213,6 @@
 }
 
 .x42-autotune{{{cns}}} .mod-enumerated .mod-enumerated-selected {
-    background-color:rgba(0,0,0,.3);
-    box-shadow:inset 0 0 4px rgba(0,0,0,.3);
-    border-radius:4px;
     padding:3px 9px;
 }
 
