@@ -9,5 +9,5 @@
         modgui:javascript <modgui/x42-autotune.js> ;
         modgui:brand "x42" ;
         modgui:label "x42-autotune" ;
-        modgui:monitoredOutputs [ lv2:symbol "nmask" ], [ lv2:symbol "nset" ] ;
+        modgui:monitoredOutputs [ lv2:symbol "nmask" ] , [ lv2:symbol "nset" ] , [ lv2:symbol "error" ] ;
     ] .
