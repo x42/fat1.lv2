@@ -1057,8 +1057,9 @@ instantiate (
 	ui->write      = write_function;
 	ui->controller = controller;
 	ui->hover      = -1;
-
+	ui->disable_signals = true;
 	*widget = toplevel (ui, ui_toplevel);
+	ui->disable_signals = false;
 	return ui;
 }
 
