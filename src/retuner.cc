@@ -323,6 +323,7 @@ void Retuner::findcycle (void)
 {
     int    d, h, i, j, k;
     float  f, m, t, x, y, z;
+    float rms = 0;
 
     d = _upsamp ? 2 : 1;
     h = _fftlen / 2;
@@ -330,9 +331,16 @@ void Retuner::findcycle (void)
     k = _ipsize - 1;
     for (i = 0; i < _fftlen; i++)
     {
-        _fftTdata [i] = _fftTwind [i] * _ipbuff [j & k];
+        int jk = j & k;
+        _fftTdata [i] = _fftTwind [i] * _ipbuff [jk];
+				rms +=  _ipbuff [jk] *  _ipbuff [jk];
         j += d;
     }
+#ifdef MOD // ignore noise-floor
+    if (rms < _fftlen * 0.000031623f) { // signal < -45dBFS/RMS
+	return;
+    }
+#endif
     fftwf_execute_dft_r2c (_fwdplan, _fftTdata, _fftFdata);    
     f = _fsamp / (_fftlen * 3e3f);
     for (i = 0; i < h; i++)

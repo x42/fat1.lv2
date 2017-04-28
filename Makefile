@@ -104,6 +104,7 @@ ifneq ($(BUILDOPENGL), no)
 endif
 ifneq ($(MOD),)
   targets+=$(BUILDDIR)modgui
+  override CXXFLAGS += -DMOD
 endif
 
 ###############################################################################
