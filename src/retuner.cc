@@ -323,7 +323,9 @@ void Retuner::findcycle (void)
 {
     int    d, h, i, j, k;
     float  f, m, t, x, y, z;
+#ifdef MOD
     float rms = 0;
+#endif
 
     d = _upsamp ? 2 : 1;
     h = _fftlen / 2;
@@ -333,11 +335,14 @@ void Retuner::findcycle (void)
     {
         int jk = j & k;
         _fftTdata [i] = _fftTwind [i] * _ipbuff [jk];
-				rms +=  _ipbuff [jk] *  _ipbuff [jk];
+#ifdef MOD
+         rms +=  _ipbuff [jk] *  _ipbuff [jk];
+#endif
         j += d;
     }
 #ifdef MOD // ignore noise-floor
     if (rms < _fftlen * 0.000031623f) { // signal < -45dBFS/RMS
+	_cycle = 0;
 	return;
     }
 #endif
