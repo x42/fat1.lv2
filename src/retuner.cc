@@ -134,6 +134,10 @@ Retuner::Retuner (int fsamp) :
     _frcount = 0;
     _rindex1 = _ipsize / 2;
     _rindex2 = 0;
+
+    for (int i = 0; i < 12; ++i) {
+        _notescale[i] = i;
+    }
 }
 
 
@@ -418,7 +422,7 @@ void Retuner::finderror (void)
     {
         if (_notemask & m)
         {
-            d = f - (i - 9) / 12.0f;
+            d = f - (_notescale[i] - 9) / 12.0f;
             d -= floorf (d + 0.5f);
             a = fabsf (d);
             if (i == _lastnote) a -= _notebias;
