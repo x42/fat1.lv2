@@ -34,8 +34,7 @@ Retuner::Retuner (int fsamp) :
     _corrfilt (1.0f),
     _corrgain (1.0f),
     _corroffs (0.0f),
-    _notemask (0xFFF),
-    _notescale {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f}
+    _notemask (0xFFF)
 {
     int   i, h;
     float t, x, y;
@@ -135,6 +134,10 @@ Retuner::Retuner (int fsamp) :
     _frcount = 0;
     _rindex1 = _ipsize / 2;
     _rindex2 = 0;
+
+    for (int i = 0; i < 12; ++i) {
+        _notescale[i] = i;
+    }
 }
 
 
