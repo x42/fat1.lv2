@@ -10,7 +10,7 @@ static const RtkLv2Description _plugin = {
 	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune" // const char *plugin_human_id
-	, (const struct LV2Port[27])
+	, (const struct LV2Port[39])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -35,22 +35,34 @@ static const RtkLv2Description _plugin = {
 		{ "m10", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A#"},
 		{ "m11", CONTROL_IN, 1.000000, 0.000000, 1.000000, "B"},
 		{ "panic", CONTROL_IN, 0.000000, 0.000000, 1.000000, "MIDI Panic"},
+		{ "scale00", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (C)"},
+		{ "scale01", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (C#)"},
+		{ "scale02", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (D)"},
+		{ "scale03", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (D#)"},
+		{ "scale04", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (E)"},
+		{ "scale05", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (F)"},
+		{ "scale06", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (F#)"},
+		{ "scale07", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (G)"},
+		{ "scale08", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (G#)"},
+		{ "scale09", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A)"},
+		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
+		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
 		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
 		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
 		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
 		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
 	}
-	, 27 // uint32_t nports_total
+	, 39 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 24 // uint32_t nports_ctrl
-	, 20 // uint32_t nports_ctrl_in
+	, 36 // uint32_t nports_ctrl
+	, 32 // uint32_t nports_ctrl_in
 	, 4 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 26 // uint32_t latency_ctrl_port
+	, 38 // uint32_t latency_ctrl_port
 };

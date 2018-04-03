@@ -66,7 +66,12 @@ public:
     {
         _notemask = k;
     }
-   
+
+    void set_notescale (int i, float v)
+    {
+        _notescale[i] = i + v;
+    }
+
     int get_noteset (void)
     {
         int k;
@@ -123,6 +128,9 @@ private:
     fftwf_plan       _fwdplan;
     fftwf_plan       _invplan;
 		LV2AT::Resampler _resampler;
+
+    float            _notescale[12];
+
 };
 
 };

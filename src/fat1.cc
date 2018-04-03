@@ -260,6 +260,10 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_corroffs (*self->port [FAT_OFFS]);
 	self->retuner->set_notemask (notes);
 
+	for (int i = 0; i < 12; ++i) {
+		self->retuner->set_notescale (i, *self->port [FAT_SCALE + i]);
+	}
+
 	/* process */
 	self->retuner->process (n_samples, self->port [FAT_INPUT], self->port [FAT_OUTPUT]);
 

@@ -34,7 +34,8 @@ Retuner::Retuner (int fsamp) :
     _corrfilt (1.0f),
     _corrgain (1.0f),
     _corroffs (0.0f),
-    _notemask (0xFFF)
+    _notemask (0xFFF),
+    _notescale {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f}
 {
     int   i, h;
     float t, x, y;
@@ -418,7 +419,7 @@ void Retuner::finderror (void)
     {
         if (_notemask & m)
         {
-            d = f - (i - 9) / 12.0f;
+            d = f - (_notescale[i] - 9) / 12.0f;
             d -= floorf (d + 0.5f);
             a = fabsf (d);
             if (i == _lastnote) a -= _notebias;

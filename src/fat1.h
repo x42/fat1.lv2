@@ -13,7 +13,8 @@ typedef enum {
 
 	FAT_NOTE, // + 12 notes
 	FAT_PANIC = 22,
-	FAT_MASK,
+	FAT_SCALE, // +12 notes
+	FAT_MASK = 35,
 	FAT_NSET,
 	FAT_ERRR,
 	FAT_LTNC,
