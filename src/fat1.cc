@@ -137,11 +137,17 @@ instantiate (const LV2_Descriptor*     descriptor,
 	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
 	LV2_URID_Map* map = NULL;
 
-	self->microtonal = true;
+	#ifdef RTK_DESCRIPTOR // standalone lv2
 
-	if (strcmp(descriptor->URI, FAT1_MICROTONAL_URI)) {
-		self->microtonal = false;
+		self->microtonal = true;
+
+	#else
+
+	if (strcmp(descriptor->URI, FAT1_MICROTONAL_URI) == 0) {
+		self->microtonal = true;
 	}
+
+	#endif
 
 	int i;
 	for (i=0; features[i]; ++i) {
