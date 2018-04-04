@@ -137,6 +137,8 @@ instantiate (const LV2_Descriptor*     descriptor,
 	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
 	LV2_URID_Map* map = NULL;
 
+	self->microtonal = true;
+
 	if (strcmp(descriptor->URI, FAT1_MICROTONAL_URI)) {
 		self->microtonal = false;
 	}
