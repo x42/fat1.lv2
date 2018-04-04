@@ -35,6 +35,10 @@ static const RtkLv2Description _plugin = {
 		{ "m10", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A#"},
 		{ "m11", CONTROL_IN, 1.000000, 0.000000, 1.000000, "B"},
 		{ "panic", CONTROL_IN, 0.000000, 0.000000, 1.000000, "MIDI Panic"},
+		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
+		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
+		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
+		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
 		{ "scale00", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (C)"},
 		{ "scale01", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (C#)"},
 		{ "scale02", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (D)"},
@@ -47,10 +51,6 @@ static const RtkLv2Description _plugin = {
 		{ "scale09", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A)"},
 		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
 		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
-		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
-		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
-		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
-		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
 	}
 	, 39 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
@@ -64,5 +64,5 @@ static const RtkLv2Description _plugin = {
 	, 4 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 38 // uint32_t latency_ctrl_port
+	, 26 // uint32_t latency_ctrl_port
 };

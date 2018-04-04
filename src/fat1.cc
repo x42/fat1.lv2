@@ -59,6 +59,8 @@ typedef struct {
 	int midichan;
 	float latency;
 
+	bool microtonal;
+
 	uint32_t noteset_update_interval;
 	uint32_t noteset_update_counter;
 	int      noteset;
@@ -134,6 +136,10 @@ instantiate (const LV2_Descriptor*     descriptor,
 {
 	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
 	LV2_URID_Map* map = NULL;
+
+	if (strcmp(descriptor->URI, FAT1_MICROTONAL_URI) == 0) {
+		self->microtonal = true;
+	}
 
 	int i;
 	for (i=0; features[i]; ++i) {
@@ -260,8 +266,10 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_corroffs (*self->port [FAT_OFFS]);
 	self->retuner->set_notemask (notes);
 
-	for (int i = 0; i < 12; ++i) {
-		self->retuner->set_notescale (i, *self->port [FAT_SCALE + i]);
+	if (self->microtonal) {
+		for (int i = 0; i < 12; ++i) {
+			self->retuner->set_notescale (i, *self->port [FAT_SCALE + i]);
+		}
 	}
 
 	/* process */
@@ -315,6 +323,18 @@ static const LV2_Descriptor descriptor = {
 	extension_data
 };
 
+static const LV2_Descriptor descriptor_microtonal = {
+	FAT1_MICROTONAL_URI,
+	instantiate,
+	connect_port,
+	activate,
+	run,
+	NULL,
+	cleanup,
+	extension_data
+};
+
+
 #undef LV2_SYMBOL_EXPORT
 #ifdef _WIN32
 #    define LV2_SYMBOL_EXPORT __declspec(dllexport)
@@ -328,6 +348,8 @@ lv2_descriptor (uint32_t index)
 	switch (index) {
 	case 0:
 		return &descriptor;
+	case 1:
+		return &descriptor_microtonal;
 	default:
 		return NULL;
 	}
