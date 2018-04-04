@@ -26,6 +26,7 @@
 #include "../src/fat1.h"
 
 #define RTK_URI FAT1_URI
+#define RTK_MICROTONAL_URI FAT1_MICROTONAL_URI
 #define RTK_GUI "#ui"
 
 #ifndef MAX
@@ -1048,7 +1049,7 @@ instantiate (
 		return NULL;
 	}
 
-	if (strcmp (plugin_uri, RTK_URI)) {
+	if (strcmp (plugin_uri, RTK_URI) && strcmp (plugin_uri, RTK_MICROTONAL_URI)) {
 		free (ui);
 		return NULL;
 	}
