@@ -92,6 +92,7 @@ typedef struct {
 	int key_majmin;
 
 	int tt_id;
+	int tt_timeout;
 	cairo_rectangle_t* tt_pos;
 
 	const char* nfo;
@@ -336,15 +337,32 @@ static bool tooltip_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev) 
 
 }
 
+static bool
+tooltip_cnt (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev)
+{
+	Fat1UI* ui = (Fat1UI*)rw->top;
+	if (++ui->tt_timeout < 8) {
+		rcontainer_expose_event (rw, cr, ev);
+		queue_draw (rw);
+	} else {
+		rw->expose_event = tooltip_overlay;
+		rw->resized      = TRUE;
+		tooltip_overlay (rw, cr, ev);
+	}
+	return TRUE;
+}
+
+
 static void ttip_handler (RobTkLbl* d, bool on, void *handle) {
 	Fat1UI* ui = (Fat1UI*)handle;
 	ui->tt_id = -1;
+	ui->tt_timeout = 0;
 	for (int i = 0; i < 5; ++i) {
 		if (d == ui->lbl_ctrl[i]) { ui->tt_id = i; break;}
 	}
 	if (on && ui->tt_id >= 0) {
 		ui->tt_pos = &d->rw->area;
-		ui->ctbl->expose_event = tooltip_overlay;
+		ui->ctbl->expose_event = tooltip_cnt;
 		ui->ctbl->resized = TRUE;
 		queue_draw (ui->ctbl);
 	} else {
