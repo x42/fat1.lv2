@@ -105,7 +105,7 @@
 		lv2:minimum 400.0 ;
 		lv2:maximum 480.0 ;
 		units:unit units:hz;
-		pprop:rangeSteps 400;
+		pprop:rangeSteps 401;
 		rdfs:comment "This sets the frequency corresponding to 'A' pitch, in other words the required tuning. This will be the default 440 Hz in most cases.";
 	] , [
 		a lv2:InputPort ,
@@ -116,7 +116,7 @@
 		lv2:default 0.5 ;
 		lv2:minimum 0.0 ;
 		lv2:maximum 1.0 ;
-		pprop:rangeSteps 270;
+		pprop:rangeSteps 271;
 		rdfs:comment "Normally the pitch estimator will select the enabled note closest to the measured pitch. The Bias control adds some preference for the current note - this allows it to go off-tune more than would be the case otherwise.";
 	] , [
 		a lv2:InputPort ,
@@ -131,7 +131,7 @@
 		lv2:scalePoint [ rdfs:label  "Med";  rdf:value 0.1 ; ] ;
 		lv2:scalePoint [ rdfs:label  "Fast"; rdf:value 0.02 ; ] ;
 		lv2:portProperty pprop:logarithmic;
-		pprop:rangeSteps 200;
+		pprop:rangeSteps 201;
 		rdfs:comment "This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value.";
 	] , [
 		a lv2:InputPort ,
@@ -142,7 +142,7 @@
 		lv2:default 1.0 ;
 		lv2:minimum 0.0 ;
 		lv2:maximum 1.0 ;
-		pprop:rangeSteps 270;
+		pprop:rangeSteps 271;
 		rdfs:comment "Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato.";
 	] , [
 		a lv2:InputPort ,
@@ -153,7 +153,7 @@
 		lv2:default 0.0 ;
 		lv2:minimum -2.0 ;
 		lv2:maximum  2.0 ;
-		pprop:rangeSteps 400;
+		pprop:rangeSteps 401;
 		units:unit units:semitone12TET;
 		rdfs:comment "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change.";
 	] , [
