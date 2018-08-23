@@ -32,6 +32,7 @@
 #include "retuner.h"
 
 static pthread_mutex_t fftw_planner_lock = PTHREAD_MUTEX_INITIALIZER;
+static unsigned int instance_count = 0;
 
 typedef struct {
 	LV2_URID atom_Sequence;
@@ -154,6 +155,7 @@ instantiate (const LV2_Descriptor*     descriptor,
 
 	pthread_mutex_lock(&fftw_planner_lock);
 	self->retuner = new LV2AT::Retuner (rate);
+	++instance_count;
 	pthread_mutex_unlock(&fftw_planner_lock);
 
 	self->notemask = 0xfff;
@@ -282,6 +284,23 @@ cleanup (LV2_Handle instance)
 	Fat1* self = (Fat1*)instance;
 	pthread_mutex_lock(&fftw_planner_lock);
 	delete self->retuner;
+	if (instance_count > 0) {
+		--instance_count;
+	}
+#ifdef WITH_STATIC_FFTW_CLEANUP
+	/* use this only when statically linking to a local fftw!
+	 *
+	 * "After calling fftw_cleanup, all existing plans become undefined,
+	 *  and you should not attempt to execute them nor to destroy them."
+	 * [http://www.fftw.org/fftw3_doc/Using-Plans.html]
+	 *
+	 * If libfftwf is shared with other plugins or the host this can
+	 * cause undefined behavior.
+	 */
+	if (instance_count == 0) {
+		fftwf_cleanup ();
+	}
+#endif
 	pthread_mutex_unlock(&fftw_planner_lock);
 	free (instance);
 }
