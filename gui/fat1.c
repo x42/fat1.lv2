@@ -54,6 +54,7 @@ struct PianoKey {
 typedef struct {
 	LV2UI_Write_Function write;
 	LV2UI_Controller controller;
+	LV2UI_Touch* touch;
 
 	PangoFontDescription* font[2];
 
@@ -422,6 +423,12 @@ static bool cb_btn_panic (RobWidget *w, void* handle) {
 /*** scale overlay display ****/
 static void keysel_apply (Fat1UI* ui)
 {
+	if (ui->touch) {
+		for (uint32_t n = 0; n < 12; ++n) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, true);
+		}
+	}
+
 	int k = 0;
 	switch (ui->key_note) {
 		case 0: k = 12; break;
@@ -435,6 +442,11 @@ static void keysel_apply (Fat1UI* ui)
 			for (uint32_t n = 0; n < 12; ++n) {
 				float val = 1.0;
 				ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+			}
+			if (ui->touch) {
+				for (uint32_t n = 0; n < 12; ++n) {
+					ui->touch->touch (ui->touch->handle, FAT_NOTE + n, false);
+				}
 			}
 			return;
 		default:
@@ -450,6 +462,11 @@ static void keysel_apply (Fat1UI* ui)
 	for (uint32_t n = 0; n < 12; ++n) {
 		float val = western [ (n + k) % 12 ];
 		ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+	}
+	if (ui->touch) {
+		for (uint32_t n = 0; n < 12; ++n) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, false);
+		}
 	}
 }
 
@@ -739,6 +756,11 @@ static RobWidget* m0_mouse_up (RobWidget* handle, RobTkBtnEvent* ev) {
 		ui->notes |= (1 << n);
 	}
 	ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+
+	if (ui->touch) {
+		ui->touch->touch (ui->touch->handle, FAT_NOTE + n, false);
+	}
+
 	queue_draw (ui->m0);
 	if (ui->ctbl->block_events) {
 		ui->key_note = -1;
@@ -759,6 +781,10 @@ static void m0_leave (RobWidget* handle) {
 static RobWidget* m0_mouse_down (RobWidget* handle, RobTkBtnEvent* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
 	if (ev->button == 1) {
+		const int n = ui->hover;
+		if (n >= 0 && n < 12 && ui->touch) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, true);
+		}
 		return handle;
 	}
 	if (ev->button == 3 && robtk_select_get_value (ui->sel_mode) != 1) {
@@ -923,6 +949,10 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		robtk_dial_set_detent_default (ui->spn_ctrl[i], true);
 		robtk_dial_set_scroll_mult (ui->spn_ctrl[i], ctrl_range[i].mult);
 
+		if (ui->touch) {
+			robtk_dial_set_touch (ui->spn_ctrl[i], ui->touch->touch, ui->touch->handle, FAT_TUNE + i);
+		}
+
 		robtk_dial_set_scaled_surface_scale (ui->spn_ctrl[i], ui->dial_bg[i], 2.0);
 
 		robtk_lbl_annotation_callback(ui->lbl_ctrl[i], ttip_handler, ui);
@@ -991,6 +1021,11 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	robtk_select_set_default_item (ui->sel_mode, 0);
 	robtk_select_set_value (ui->sel_mode, 0);
 	robtk_select_set_callback (ui->sel_mode, cb_mode, ui);
+
+	if (ui->touch) {
+		robtk_select_set_touch (ui->sel_mchn, ui->touch->touch, ui->touch->handle, FAT_MCHN);
+		robtk_select_set_touch (ui->sel_mode, ui->touch->touch, ui->touch->handle, FAT_MODE);
+	}
 
 	ui->lbl_mode = robtk_lbl_new ("Mode");
 	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.");
@@ -1069,6 +1104,12 @@ instantiate (
 	if (strcmp (plugin_uri, RTK_URI)) {
 		free (ui);
 		return NULL;
+	}
+
+	for (int i = 0; features[i]; ++i) {
+		if (!strcmp(features[i]->URI, LV2_UI__touch)) {
+			ui->touch = (LV2UI_Touch*)features[i]->data;
+		}
 	}
 
 	ui->nfo        = robtk_info (ui_toplevel);
