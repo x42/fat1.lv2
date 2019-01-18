@@ -263,12 +263,12 @@ $(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) Makefile
 
 jackapps: $(JACKAPP)
 
-$(eval x42_fat1_JACKSRC = src/fat1.cc src/retuner.cc src/resampler.cc src/resampler-table.cc)
+$(eval x42_fat1_JACKSRC = -DX42_MULTIPLUGIN src/fat1.cc src/retuner.cc src/resampler.cc src/resampler-table.cc)
 x42_fat1_JACKGUI = gui/fat1.c
-x42_fat1_LV2HTTL = lv2ttl/fat1.h
+x42_fat1_LV2HTTL = lv2ttl/plugins.h
 x42_fat1_JACKDESC = lv2ui_descriptor
 $(APPBLD)x42-fat1$(EXE_EXT): $(DSP_DEPS) $(GUI_DEPS) \
-	        $(x42_fat1_JACKGUI) $(x42_fat1_LV2HTTL)
+	        $(x42_fat1_LV2HTTL) lv2ttl/fat1_chroma.h lv2ttl/fat1_micro.h
 
 ifneq ($(BUILDOPENGL)$(BUILDJACKAPP), nono)
  -include $(RW)robtk.mk

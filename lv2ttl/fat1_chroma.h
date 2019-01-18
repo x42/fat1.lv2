@@ -4,7 +4,7 @@
 extern const LV2_Descriptor* lv2_descriptor(uint32_t index);
 extern const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index);
 
-static const RtkLv2Description _plugin = {
+static const RtkLv2Description _fat1_chroma = {
 	&lv2_descriptor,
 	&lv2ui_descriptor
 	, 0 // uint32_t dsp_descriptor_id
@@ -17,11 +17,11 @@ static const RtkLv2Description _plugin = {
 		{ "out", AUDIO_OUT, nan, nan, nan, "Output"},
 		{ "mode", CONTROL_IN, 0.000000, 0.000000, 2.000000, "Mode"},
 		{ "channelf", CONTROL_IN, 0.000000, 0.000000, 16.000000, "MIDI Channel (1..16) on which the filter is active; 0: any)."},
-		{ "tuning", CONTROL_IN, 440.000000, 400.000000, 480.000000, "Tuning"},
-		{ "bias", CONTROL_IN, 0.500000, 0.000000, 1.000000, "Bias"},
-		{ "filter", CONTROL_IN, 0.100000, 0.020000, 0.500000, "Filter"},
-		{ "corr", CONTROL_IN, 1.000000, 0.000000, 1.000000, "Correlation"},
-		{ "offset", CONTROL_IN, 0.000000, -2.000000, 2.000000, "Offset"},
+		{ "tuning", CONTROL_IN, 440.000000, 400.000000, 480.000000, "This sets the frequency corresponding to 'A' pitch, in other words the required tuning. This will be the default 440 Hz in most cases."},
+		{ "bias", CONTROL_IN, 0.500000, 0.000000, 1.000000, "Normally the pitch estimator will select the enabled note closest to the measured pitch. The Bias control adds some preference for the current note - this allows it to go off-tune more than would be the case otherwise."},
+		{ "filter", CONTROL_IN, 0.100000, 0.020000, 0.500000, "This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value."},
+		{ "corr", CONTROL_IN, 1.000000, 0.000000, 1.000000, "Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato."},
+		{ "offset", CONTROL_IN, 0.000000, -2.000000, 2.000000, "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change."},
 		{ "m00", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C"},
 		{ "m01", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C#"},
 		{ "m02", CONTROL_IN, 1.000000, 0.000000, 1.000000, "D"},
