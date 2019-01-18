@@ -234,10 +234,16 @@ ifneq ($(MOD),)
 		lv2ttl/manifest.modgui.in >> $(BUILDDIR)manifest.ttl
 endif
 
-$(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).gui.in
+$(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).base.ttl.in lv2ttl/$(LV2NAME).chroma.ttl.in lv2ttl/$(LV2NAME).micro.ttl.in lv2ttl/$(LV2NAME).gui.in
 	@mkdir -p $(BUILDDIR)
-	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@SIGNATURE@/$(LV2SIGN)/;s/@VERSION@/lv2:microVersion $(LV2MIC) ;lv2:minorVersion $(LV2MIN) ;/g;s/@UITTL@/$(UITTL)/;s/@MODBRAND@/$(MODBRAND)/;s/@MODLABEL@/$(MODLABEL)/" \
+	sed "s/@LV2NAME@/$(LV2NAME)/g" \
 		lv2ttl/$(LV2NAME).ttl.in > $(BUILDDIR)$(LV2NAME).ttl
+	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@SIGNATURE@/$(LV2SIGN)/;s/@VERSION@/lv2:microVersion $(LV2MIC) ;lv2:minorVersion $(LV2MIN) ;/g;s/@UITTL@/$(UITTL)/;s/@MODBRAND@/$(MODBRAND)/;s/@MODLABEL@/$(MODLABEL)/;s/@URISUFFIX@//;s/@NAMESUFFIX@//" \
+		lv2ttl/$(LV2NAME).base.ttl.in >> $(BUILDDIR)$(LV2NAME).ttl
+	cat lv2ttl/$(LV2NAME).chroma.ttl.in >> $(BUILDDIR)$(LV2NAME).ttl
+	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@SIGNATURE@/$(LV2SIGN)/;s/@VERSION@/lv2:microVersion $(LV2MIC) ;lv2:minorVersion $(LV2MIN) ;/g;s/@UITTL@/$(UITTL)/;s/@MODBRAND@/$(MODBRAND)/;s/@MODLABEL@/$(MODLABEL)/;s/@URISUFFIX@/#microtonal/;s/@NAMESUFFIX@/ (microtonal)/" \
+		lv2ttl/$(LV2NAME).base.ttl.in >> $(BUILDDIR)$(LV2NAME).ttl
+	cat lv2ttl/$(LV2NAME).micro.ttl.in >> $(BUILDDIR)$(LV2NAME).ttl
 ifneq ($(BUILDOPENGL), no)
 	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@UI_TYPE@/$(UI_TYPE)/;s/@UI_REQ@/$(LV2UIREQ)/" \
 	    lv2ttl/$(LV2NAME).gui.in >> $(BUILDDIR)$(LV2NAME).ttl

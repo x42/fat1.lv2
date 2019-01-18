@@ -96,6 +96,7 @@ typedef struct {
 	int tt_timeout;
 	cairo_rectangle_t* tt_pos;
 
+	bool microtonal;
 	const char* nfo;
 } Fat1UI;
 
@@ -1101,9 +1102,13 @@ instantiate (
 		return NULL;
 	}
 
-	if (strcmp (plugin_uri, RTK_URI)) {
+	if (0 == strcmp(plugin_uri, FAT1_URI)) {
+		ui->microtonal = false;
+	} else if (0 == strcmp(plugin_uri, FAT1_URI "#microtonal")) {
+		ui->microtonal = true;
+	} else {
 		free (ui);
-		return NULL;
+		return 0;
 	}
 
 	for (int i = 0; features[i]; ++i) {
@@ -1186,6 +1191,10 @@ port_event (LV2UI_Handle handle,
 			ui->err = v;
 			queue_draw (ui->m0);
 		}
+	}
+	else if (port_index >= FAT_SCALE && port_index < FAT_LAST && ui->microtonal) {
+		//uint32_t k = port_index - FAT_SCALE;
+		// TODO microtonal scale
 	}
 
 	ui->disable_signals = false;
