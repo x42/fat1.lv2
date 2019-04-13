@@ -1,2 +1,5 @@
 .gitignore export-ignore
 .gitattributes export-ignore
+
+/Makefile.git export-ignore
+/modgui export-ignore
