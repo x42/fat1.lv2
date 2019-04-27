@@ -141,23 +141,23 @@ float ctrl_to_gui (const uint32_t c, const float v) {
 	return rintf (ctrl_range[c].step / r * (logf (v / ctrl_range[c].min)));
 }
 
-float gui_to_ctrl (const uint32_t c, const float v) {
+static float gui_to_ctrl (const uint32_t c, const float v) {
 	if (!ctrl_range[c].log) { return v; }
 	const float r = log (ctrl_range[c].max / ctrl_range[c].min);
 	return expf (logf (ctrl_range[c].min) + v * r / ctrl_range[c].step);
 }
 
-float k_min (const uint32_t c) {
+static float k_min (const uint32_t c) {
 	if (!ctrl_range[c].log) { return ctrl_range[c].min; }
 	return 0;
 }
 
-float k_max (const uint32_t c) {
+static float k_max (const uint32_t c) {
 	if (!ctrl_range[c].log) { return ctrl_range[c].max; }
 	return ctrl_range[c].step;
 }
 
-float k_step (const uint32_t c) {
+static float k_step (const uint32_t c) {
 	if (!ctrl_range[c].log) { return ctrl_range[c].step; }
 	return 1;
 }
