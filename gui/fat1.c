@@ -655,13 +655,13 @@ static void
 calc_keys (Fat1UI* ui)
 {
 	const int max_w0 = floor (.75 * (ui->m0_height - 10) / 4);
-	const int max_w1 = floor ((ui->m0_width - 8) / 7);
+	const int max_w1 = floor ((ui->m0_width - 8) / 8);
 
 	const int key_width = MIN (max_w0, max_w1);
 	const int black_key_width = rint (.8 * key_width);
 
 	const int height = 4 * key_width;
-	const int piano_width = 7 * key_width;
+	const int piano_width = 8 * key_width;
 	const int margin = (ui->m0_width - piano_width) / 2;
 
 	ui->m0_pkt = .5 * (ui->m0_height - (height / .75));
@@ -885,6 +885,36 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 
 	const int xmargin = .5 * (ui->m0_width - ui->m0_pkw) + 5;
 
+	const int xbw   = ceil (ui->m0_pkk / 4.0);
+	const int xbend = ui->m0_width - xmargin - xbw * 2 + 4;
+	const int ybend = ui->m0_pkt + 1;
+	const int hbend = ui->m0_pkh - 3;
+
+	rounded_rectangle (cr, xbend, ybend, 2 * xbw, hbend, 3);
+	CairoSetSouerceRGBA (c_blk);
+	cairo_set_line_width(cr, 1.5);
+	cairo_stroke_preserve (cr);
+	CairoSetSouerceRGBA (c_g20);
+	cairo_fill (cr);
+
+	if (ui->bend != 0 && ui->bendmult > 0) {
+		float dy = hbend * -.5 * ui->bend;
+		if (dy >= 0) {
+		rounded_rectangle (cr, xbend, ybend + .5 * hbend, 2 * xbw, dy, 3);
+		} else {
+		rounded_rectangle (cr, xbend, ybend + .5 * hbend + dy, 2 * xbw, -dy, 3);
+		}
+		cairo_set_source_rgba (cr, 0.0, 0.5, 0.6, 0.6);
+		cairo_fill (cr);
+		char txt[64];
+		CairoSetSouerceRGBA (c_wht);
+		snprintf(txt, 64, "%+3.0f\u00A2", 100.f * ui->bend * ui->bendmult);
+		write_text_full (cr, txt, ui->font[0], xbend + xbw, ybend + .5 * hbend, -.5 * M_PI, 2, c_dlf);
+	} else {
+		CairoSetSouerceRGBA (c_wht);
+		write_text_full (cr, "(Pitch-bend)", ui->font[0], xbend + xbw, ybend + .5 * hbend, -.5 * M_PI, 2, c_dlf);
+	}
+
 #define XPOS(V) rintf (xmargin + (ui->m0_width - 2.0 * xmargin) * ((V) + 1.) * .5)
 
 	// TODO cache grid & labels onto an image surface
@@ -907,7 +937,6 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 	cairo_set_source (cr, pat);
 	cairo_fill (cr);
 	cairo_pattern_destroy (pat);
-
 
 	float ex = XPOS(ui->err) - (bw / 2) - 1;
 	cairo_rectangle (cr, ex, by0, bw, bh);
