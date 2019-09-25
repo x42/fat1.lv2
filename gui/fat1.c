@@ -89,6 +89,8 @@ typedef struct {
 	uint32_t notes; // selected notes on scale (manual)
 	uint32_t mask;
 	uint32_t set;
+	float    bendmult;
+	float    bend;
 	float    err;
 
 	int key_note;
@@ -1206,6 +1208,18 @@ port_event (LV2UI_Handle handle,
 		uint32_t m = v;
 		if (ui->set != m) {
 			ui->set = m;
+			queue_draw (ui->m0);
+		}
+	}
+	else if (port_index == FAT_PBST) {
+		if (ui->bendmult != v) {
+			ui->bendmult = v;
+			queue_draw (ui->m0);
+		}
+	}
+	else if (port_index == FAT_BEND) {
+		if (ui->bend != v) {
+			ui->bend = v;
 			queue_draw (ui->m0);
 		}
 	}

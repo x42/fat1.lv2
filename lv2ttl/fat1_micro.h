@@ -10,7 +10,7 @@ static const RtkLv2Description _fat1_micro = {
 	, 1 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune (microtonal)" // const char *plugin_human_id
-	, (const struct LV2Port[39])
+	, (const struct LV2Port[41])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -22,6 +22,7 @@ static const RtkLv2Description _fat1_micro = {
 		{ "filter", CONTROL_IN, 0.100000, 0.020000, 0.500000, "This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value."},
 		{ "corr", CONTROL_IN, 1.000000, 0.000000, 1.000000, "Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato."},
 		{ "offset", CONTROL_IN, 0.000000, -2.000000, 2.000000, "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change."},
+		{ "bendrange", CONTROL_IN, 2.000000, 0.000000, 7.000000, "Configures the effect range of MIDI pitch-bend messages. Pitch-bend is added to the pitch correction offset."},
 		{ "m00", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C"},
 		{ "m01", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C#"},
 		{ "m02", CONTROL_IN, 1.000000, 0.000000, 1.000000, "D"},
@@ -37,6 +38,7 @@ static const RtkLv2Description _fat1_micro = {
 		{ "panic", CONTROL_IN, 0.000000, 0.000000, 1.000000, "MIDI Panic"},
 		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
 		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
+		{ "bend", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Bend"},
 		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
 		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
 		{ "scale00", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (C)"},
@@ -52,17 +54,17 @@ static const RtkLv2Description _fat1_micro = {
 		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
 		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
 	}
-	, 39 // uint32_t nports_total
+	, 41 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 36 // uint32_t nports_ctrl
-	, 32 // uint32_t nports_ctrl_in
-	, 4 // uint32_t nports_ctrl_out
+	, 38 // uint32_t nports_ctrl
+	, 33 // uint32_t nports_ctrl_in
+	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 26 // uint32_t latency_ctrl_port
+	, 28 // uint32_t latency_ctrl_port
 };

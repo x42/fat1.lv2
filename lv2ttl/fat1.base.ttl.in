@@ -137,6 +137,17 @@
 		a lv2:InputPort ,
 			lv2:ControlPort ;
 		lv2:index 10 ;
+		lv2:symbol "bendrange" ;
+		lv2:name "Pitch Bend Range";
+		lv2:default 2.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 7.0 ;
+		units:unit units:semitone12TET;
+		rdfs:comment "Configures the effect range of MIDI pitch-bend messages. Pitch-bend is added to the pitch correction offset.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 11 ;
 		lv2:symbol "m00" ;
 		lv2:name "C";
 		lv2:default 1 ;
@@ -146,7 +157,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 11 ;
+		lv2:index 12 ;
 		lv2:symbol "m01" ;
 		lv2:name "C#";
 		lv2:default 1 ;
@@ -156,7 +167,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 12 ;
+		lv2:index 13 ;
 		lv2:symbol "m02" ;
 		lv2:name "D";
 		lv2:default 1 ;
@@ -166,7 +177,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 13 ;
+		lv2:index 14 ;
 		lv2:symbol "m03" ;
 		lv2:name "D#";
 		lv2:default 1 ;
@@ -176,7 +187,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 14 ;
+		lv2:index 15 ;
 		lv2:symbol "m04" ;
 		lv2:name "E";
 		lv2:default 1 ;
@@ -186,7 +197,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 15 ;
+		lv2:index 16 ;
 		lv2:symbol "m05" ;
 		lv2:name "F";
 		lv2:default 1 ;
@@ -196,7 +207,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 16 ;
+		lv2:index 17 ;
 		lv2:symbol "m06" ;
 		lv2:name "F#";
 		lv2:default 1 ;
@@ -206,7 +217,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 17 ;
+		lv2:index 18 ;
 		lv2:symbol "m07" ;
 		lv2:name "G";
 		lv2:default 1 ;
@@ -216,7 +227,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 18 ;
+		lv2:index 19 ;
 		lv2:symbol "m08" ;
 		lv2:name "G#";
 		lv2:default 1 ;
@@ -226,7 +237,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 19 ;
+		lv2:index 20 ;
 		lv2:symbol "m09" ;
 		lv2:name "A";
 		lv2:default 1 ;
@@ -236,7 +247,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 20 ;
+		lv2:index 21 ;
 		lv2:symbol "m10" ;
 		lv2:name "A#";
 		lv2:default 1 ;
@@ -246,7 +257,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 21 ;
+		lv2:index 22 ;
 		lv2:symbol "m11" ;
 		lv2:name "B";
 		lv2:default 1 ;
@@ -256,7 +267,7 @@
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
-		lv2:index 22 ;
+		lv2:index 23 ;
 		lv2:symbol "panic" ;
 		lv2:name "MIDI Panic";
 		lv2:default 0 ;
@@ -266,7 +277,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 23 ;
+		lv2:index 24 ;
 		lv2:symbol "nmask" ;
 		lv2:name "Note Mask";
 		lv2:minimum 0 ;
@@ -275,7 +286,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 24 ;
+		lv2:index 25 ;
 		lv2:symbol "nset" ;
 		lv2:name "Note Set";
 		lv2:minimum 0 ;
@@ -284,7 +295,15 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 25 ;
+		lv2:index 26 ;
+		lv2:symbol "bend" ;
+		lv2:name "Pitch Bend";
+		lv2:minimum -1.0 ;
+		lv2:maximum  1.0 ;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 27 ;
 		lv2:symbol "error" ;
 		lv2:name "Pitch Error";
 		lv2:minimum -1.0 ;
@@ -292,7 +311,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 26 ;
+		lv2:index 28 ;
 		lv2:symbol "latency" ;
 		lv2:name "latency";
 		lv2:minimum 0 ;

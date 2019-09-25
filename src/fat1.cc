@@ -58,6 +58,7 @@ typedef struct {
 	int notemask;
 	int midimask;
 	int midichan;
+	float pitchbend;
 	float latency;
 
 	bool microtonal;
@@ -78,6 +79,7 @@ static void clear_midimask (Fat1* self)
 		self->notes [i] = 0;
 	}
 	self->midimask = 0;
+	self->pitchbend = 0;
 }
 
 static void update_midimask (Fat1* self)
@@ -87,6 +89,10 @@ static void update_midimask (Fat1* self)
 	for (i = 0, b = 1; i < 12; i++, b <<= 1) {
 		if (self->notes [i]) self->midimask |= b;
 	}
+}
+
+static int midi_14bit (const uint8_t * const b) {
+	return (b[1]) | (b[2] << 7);
 }
 
 static int
@@ -101,7 +107,10 @@ parse_midi (Fat1* self,
 
 	if ((self->midichan < 0) || ((msg[0] & 0x0f) == self->midichan)) {
 		const uint32_t n = msg[1];
-		switch ( msg[0] & 0xf0) {
+		switch (msg[0] & 0xf0) {
+			case 0xe0:
+				self->pitchbend = (midi_14bit (msg) - 8192) / 8192.f;
+				break;
 			case 0xb0:
 				if ( (n == 123 || n == 120) && msg[2] == 0) { // midi-panic
 					clear_midimask (self);
@@ -260,6 +269,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 			break;
 		case 2:
 			notes = self->notemask;
+			self->pitchbend = 0.f;
 			break;
 		default:
 			notes = self->midimask ? self->midimask : self->notemask;
@@ -270,7 +280,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_notebias (*self->port [FAT_BIAS]);
 	self->retuner->set_corrfilt (*self->port [FAT_FILT]);
 	self->retuner->set_corrgain (*self->port [FAT_CORR]);
-	self->retuner->set_corroffs (*self->port [FAT_OFFS]);
+	self->retuner->set_corroffs (*self->port [FAT_OFFS] + *self->port [FAT_PBST] * self->pitchbend);
 	self->retuner->set_notemask (notes);
 
 	if (self->microtonal) {
@@ -293,6 +303,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 	*self->port [FAT_MASK] = notes;
 	*self->port [FAT_NSET] = self->noteset;
 	*self->port [FAT_ERRR] = self->retuner->get_error ();
+	*self->port [FAT_BEND] = self->pitchbend;
 }
 
 static void
