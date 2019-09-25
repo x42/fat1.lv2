@@ -815,13 +815,25 @@ static RobWidget* m0_mouse_move (RobWidget* handle, RobTkBtnEvent* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
 
 	int hover = -1;
+	const int y0 = 5;
 	for (uint32_t n = 0; n < 12; ++n) {
 		if (ui->pk[n].x <= ev->x && ui->pk[n].x + ui->pk[n].w > ev->x &&
-				5 <= ev->y && 5 + ui->pk[n].h > ev->y) {
+				y0 <= ev->y && y0 + ui->pk[n].h > ev->y) {
 			hover = n;
 			break;
 		}
 	}
+	for (uint32_t n = 0; n < 12; ++n) {
+		if (ui->pk[n].white) {
+			continue;
+		}
+		if (ui->pk[n].x <= ev->x && ui->pk[n].x + ui->pk[n].w > ev->x &&
+				y0 <= ev->y && y0 + ui->pk[n].h > ev->y) {
+			hover = n;
+			break;
+		}
+	}
+
 	if (ui->hover != hover) {
 		ui->hover = hover;
 		queue_draw (ui->m0);
