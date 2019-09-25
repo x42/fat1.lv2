@@ -87,6 +87,10 @@ typedef struct {
 	cairo_surface_t* dial_bg[5];
 
 	PianoKey pk[12];
+	int      m0_pkt;
+	int      m0_pkk;
+	int      m0_pkw;
+	int      m0_pkh;
 
 	int hover;
 	bool disable_signals;
@@ -660,6 +664,11 @@ calc_keys (Fat1UI* ui)
 	const int piano_width = 7 * key_width;
 	const int margin = (ui->m0_width - piano_width) / 2;
 
+	ui->m0_pkt = .5 * (ui->m0_height - (height / .75));
+	ui->m0_pkk = key_width;
+	ui->m0_pkw = piano_width;
+	ui->m0_pkh = height;
+
 	int white_key = 0;
 	for (uint32_t n = 0; n < 12; ++n) {
 		if (n == 1 || n == 3 || n == 6 || n == 8 || n == 10) {
@@ -682,6 +691,7 @@ calc_keys (Fat1UI* ui)
 static void
 draw_key (Fat1UI* ui, cairo_t* cr, int n)
 {
+	const int y0 = ui->m0_pkt;
 	const int white = ui->pk[n].white;
 	bool masked = ui->mask & (1 << n);
 
@@ -700,7 +710,7 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 	}
 
 	cairo_set_line_width (cr, 1.0);
-	cairo_rectangle (cr, ui->pk[n].x, 5, ui->pk[n].w, ui->pk[n].h);
+	cairo_rectangle (cr, ui->pk[n].x, y0, ui->pk[n].w, ui->pk[n].h);
 	cairo_fill_preserve (cr);
 
 	if (n == ui->hover && robtk_select_get_value (ui->sel_mode) != 1) {
@@ -723,7 +733,7 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 	cairo_stroke (cr);
 	if (ui->set & (1 << n)) {
 		const float rad = ui->pk[1].w * .44;
-		cairo_arc (cr, ui->pk[n].x + .5 * ui->pk[n].w, ui->pk[n].h * .95 - rad, rad, 0, 2 * M_PI);
+		cairo_arc (cr, ui->pk[n].x + .5 * ui->pk[n].w, y0 + ui->pk[n].h * .9 - rad, rad, 0, 2 * M_PI);
 		cairo_set_source_rgba (cr, .5, .5, .5, .5);
 		cairo_stroke_preserve (cr);
 		cairo_set_source_rgba (cr, .2, .8, .2, .95);
@@ -735,7 +745,7 @@ draw_key (Fat1UI* ui, cairo_t* cr, int n)
 
 static void
 m0_size_request (RobWidget* handle, int* w, int* h) {
-	*w = 120;
+	*w = 140;
 	*h = 100;
 }
 
@@ -815,7 +825,7 @@ static RobWidget* m0_mouse_move (RobWidget* handle, RobTkBtnEvent* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
 
 	int hover = -1;
-	const int y0 = 5;
+	const int y0 = ui->m0_pkt;
 	for (uint32_t n = 0; n < 12; ++n) {
 		if (ui->pk[n].x <= ev->x && ui->pk[n].x + ui->pk[n].w > ev->x &&
 				y0 <= ev->y && y0 + ui->pk[n].h > ev->y) {
@@ -868,24 +878,26 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 		}
 	}
 
-	float by0 = rint (ui->m0_height * .85);
-	float bh  = rint (ui->m0_height * .09);
+	float by0 = rint (ui->m0_pkt + ui->m0_pkh + 12);
+	float bh  = MIN (ui->m0_pkk, rint (ui->m0_height * .09));
 	int bw = rint (bh / 3.6);
 	bw |= 1 ; // odd number
 
+	const int xmargin = .5 * (ui->m0_width - ui->m0_pkw) + 5;
+
+#define XPOS(V) rintf (xmargin + (ui->m0_width - 2.0 * xmargin) * ((V) + 1.) * .5)
+
 	// TODO cache grid & labels onto an image surface
-	rounded_rectangle (cr, 8, by0, ui->m0_width - 16, bh, 3);
+	rounded_rectangle (cr, xmargin - 4, by0, ui->m0_width - 2 * xmargin + 8, bh, 3);
 	CairoSetSouerceRGBA (c_g20);
 	cairo_fill (cr);
 
-#define XPOS(V) rintf (12. + (ui->m0_width - 24.) * ((V) + 1.) * .5)
-
 	cairo_save (cr);
-	rounded_rectangle (cr, 8, by0, ui->m0_width - 16, bh, 3);
+	rounded_rectangle (cr, xmargin - 4, by0, ui->m0_width - 2 * xmargin + 8, bh, 3);
 	cairo_clip (cr);
 
-	cairo_pattern_t* pat = cairo_pattern_create_linear (0.0, 0.0, ui->m0_width, 0.0);
-	cairo_rectangle (cr, 0, by0, ui->m0_width, bh);
+	cairo_pattern_t* pat = cairo_pattern_create_linear (xmargin, 0.0, ui->m0_width - xmargin, 0.0);
+	cairo_rectangle (cr, xmargin, by0, ui->m0_width - 2 * xmargin, bh);
 	cairo_pattern_add_color_stop_rgba (pat, 0.00,  1.0, 0.0, 0.0, 0.2);
 	cairo_pattern_add_color_stop_rgba (pat, 0.40,  0.7, 0.6, 0.1, 0.2);
 	cairo_pattern_add_color_stop_rgba (pat, 0.45,  0.0, 1.0, 0.0, 0.2);
