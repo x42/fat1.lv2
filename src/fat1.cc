@@ -43,6 +43,9 @@ typedef struct {
 
 	/* URI mapping */
 	LV2_URID midi_MidiEvent;
+	LV2_URID atom_Object;
+	LV2_URID fat_panic;
+	LV2_URID atom_eventTransfer;
 
 	/* LV2 Output */
 	LV2_Log_Log* log;
@@ -61,6 +64,7 @@ typedef struct {
 	float pitchbend;
 	float latency;
 
+	bool panic_btn;
 	bool microtonal;
 
 	uint32_t noteset_update_interval;
@@ -182,7 +186,10 @@ instantiate (const LV2_Descriptor*     descriptor,
 	self->midichan = -1;
 	clear_midimask (self);
 
-	self->midi_MidiEvent = map->map (map->handle, LV2_MIDI__MidiEvent);
+	self->midi_MidiEvent     = map->map (map->handle, LV2_MIDI__MidiEvent);
+	self->atom_Object        = map->map (map->handle, LV2_ATOM__Object);
+	self->fat_panic          = map->map (map->handle, FAT1_URI "#panic");
+	self->atom_eventTransfer = map->map (map->handle, LV2_ATOM__eventTransfer);
 
 	// compare Retuner c'tor
 	if (rate < 64000) {
@@ -234,7 +241,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 	if (mode < 0) mode = 0;
 	if (mode > 2) mode = 2;
 
-	if (*self->port [FAT_PANIC] > 0 || mode == 2) {
+	if (mode == 2) {
 		clear_midimask (self);
 	}
 
@@ -245,6 +252,11 @@ run (LV2_Handle instance, uint32_t n_samples)
 		if (ev->body.type == self->midi_MidiEvent) {
 			update_midi |= parse_midi (self, ev->time.frames, (uint8_t*)(ev+1), ev->body.size);
 
+		} else if (ev->body.type == self->atom_Object) {
+			const LV2_Atom_Object* obj = (LV2_Atom_Object*)&ev->body;
+			if (obj->body.otype == self->fat_panic) {
+				clear_midimask (self);
+			}
 		}
 		ev = lv2_atom_sequence_next (ev);
 	}

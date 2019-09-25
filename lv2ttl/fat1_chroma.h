@@ -10,7 +10,7 @@ static const RtkLv2Description _fat1_chroma = {
 	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune" // const char *plugin_human_id
-	, (const struct LV2Port[29])
+	, (const struct LV2Port[28])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -35,24 +35,23 @@ static const RtkLv2Description _fat1_chroma = {
 		{ "m09", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A"},
 		{ "m10", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A#"},
 		{ "m11", CONTROL_IN, 1.000000, 0.000000, 1.000000, "B"},
-		{ "panic", CONTROL_IN, 0.000000, 0.000000, 1.000000, "MIDI Panic"},
 		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
 		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
 		{ "bend", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Bend"},
 		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
 		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
 	}
-	, 29 // uint32_t nports_total
+	, 28 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 26 // uint32_t nports_ctrl
-	, 21 // uint32_t nports_ctrl_in
+	, 25 // uint32_t nports_ctrl
+	, 20 // uint32_t nports_ctrl_in
 	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 28 // uint32_t latency_ctrl_port
+	, 27 // uint32_t latency_ctrl_port
 };

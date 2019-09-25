@@ -7,10 +7,10 @@ extern const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index);
 static const RtkLv2Description _fat1_micro = {
 	&lv2_descriptor,
 	&lv2ui_descriptor
-	, 1 // uint32_t dsp_descriptor_id
+	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune (microtonal)" // const char *plugin_human_id
-	, (const struct LV2Port[41])
+	, (const struct LV2Port[40])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -35,7 +35,6 @@ static const RtkLv2Description _fat1_micro = {
 		{ "m09", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A"},
 		{ "m10", CONTROL_IN, 1.000000, 0.000000, 1.000000, "A#"},
 		{ "m11", CONTROL_IN, 1.000000, 0.000000, 1.000000, "B"},
-		{ "panic", CONTROL_IN, 0.000000, 0.000000, 1.000000, "MIDI Panic"},
 		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
 		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
 		{ "bend", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Bend"},
@@ -54,17 +53,17 @@ static const RtkLv2Description _fat1_micro = {
 		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
 		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
 	}
-	, 41 // uint32_t nports_total
+	, 40 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 38 // uint32_t nports_ctrl
-	, 33 // uint32_t nports_ctrl_in
+	, 37 // uint32_t nports_ctrl
+	, 32 // uint32_t nports_ctrl_in
 	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 28 // uint32_t latency_ctrl_port
+	, 27 // uint32_t latency_ctrl_port
 };

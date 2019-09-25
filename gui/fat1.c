@@ -24,6 +24,7 @@
 #include <assert.h>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 
 #include "../src/fat1.h"
@@ -58,6 +59,10 @@ typedef struct {
 	LV2UI_Write_Function write;
 	LV2UI_Controller controller;
 	LV2UI_Touch* touch;
+
+	LV2_Atom_Forge forge;
+	LV2_URID uri_fat_panic;
+	LV2_URID uri_atom_EventTransfer;
 
 	PangoFontDescription* font[2];
 
@@ -378,6 +383,7 @@ static void ttip_handler (RobWidget* rw, bool on, void *handle) {
 	}
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /*** knob & button callbacks ****/
@@ -418,8 +424,15 @@ static bool cb_mode (RobWidget* w, void* handle) {
 
 static bool cb_btn_panic (RobWidget *w, void* handle) {
 	Fat1UI* ui = (Fat1UI*)handle;
-	float val = robtk_pbtn_get_pushed (ui->btn_panic) ? 1.f : 0.f;
-	ui->write (ui->controller, FAT_PANIC, sizeof (float), 0, (const void*) &val);
+
+	uint8_t obj_buf[128];
+	lv2_atom_forge_set_buffer (&ui->forge, obj_buf, 128);
+
+	LV2_Atom_Forge_Frame frame;
+	lv2_atom_forge_frame_time(&ui->forge, 0);
+	LV2_Atom* msg = (LV2_Atom*)lv2_atom_forge_object (&ui->forge, &frame, 1, ui->uri_fat_panic);
+	lv2_atom_forge_pop(&ui->forge, &frame);
+	ui->write (ui->controller, FAT_MIDI_IN, lv2_atom_total_size (msg), ui->uri_atom_EventTransfer, msg);
 	return TRUE;
 }
 
@@ -1116,7 +1129,7 @@ instantiate (
 	}
 
 	const LV2_Options_Option* options = NULL;
-	const LV2_URID_Map*       map     = NULL;
+	LV2_URID_Map*             map     = NULL;
 
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_UI__touch)) {
@@ -1128,6 +1141,11 @@ instantiate (
 		}
 	}
 
+	if (!map) {
+		free (ui);
+		return NULL;
+	}
+
 	ui->nfo        = robtk_info (ui_toplevel);
 	ui->write      = write_function;
 	ui->controller = controller;
@@ -1136,7 +1154,7 @@ instantiate (
 	*widget = toplevel (ui, ui_toplevel);
 	ui->disable_signals = false;
 
-	if (options && map) {
+	if (options) {
 		LV2_URID atom_Float = map->map (map->handle, LV2_ATOM__Float);
 		LV2_URID ui_scale   = map->map (map->handle, "http://lv2plug.in/ns/extensions/ui#scaleFactor");
 		for (const LV2_Options_Option* o = options; o->key; ++o) {
@@ -1148,6 +1166,10 @@ instantiate (
 			}
 		}
 	}
+
+	lv2_atom_forge_init (&ui->forge, map);
+	ui->uri_fat_panic = map->map (map->handle, FAT1_URI "#panic");
+	ui->uri_atom_EventTransfer = map->map (map->handle, LV2_ATOM__eventTransfer);
 
 	return ui;
 }
@@ -1170,10 +1192,6 @@ port_event (LV2UI_Handle handle,
 {
 	Fat1UI* ui = (Fat1UI*)handle;
 	if (format != 0 || port_index <= FAT_OUTPUT) return;
-
-	if (port_index == FAT_PANIC) {
-		return;
-	}
 
 	const float v = *(float*)buffer;
 	ui->disable_signals = true;

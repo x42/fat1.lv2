@@ -265,19 +265,9 @@
 		lv2:maximum 1 ;
 		lv2:portProperty lv2:integer, lv2:toggled;
 	] , [
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 23 ;
-		lv2:symbol "panic" ;
-		lv2:name "MIDI Panic";
-		lv2:default 0 ;
-		lv2:minimum 0 ;
-		lv2:maximum 1 ;
-		lv2:portProperty lv2:integer, lv2:toggled, pprop:trigger;
-	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 24 ;
+		lv2:index 23 ;
 		lv2:symbol "nmask" ;
 		lv2:name "Note Mask";
 		lv2:minimum 0 ;
@@ -286,7 +276,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 25 ;
+		lv2:index 24 ;
 		lv2:symbol "nset" ;
 		lv2:name "Note Set";
 		lv2:minimum 0 ;
@@ -295,7 +285,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 26 ;
+		lv2:index 25 ;
 		lv2:symbol "bend" ;
 		lv2:name "Pitch Bend";
 		lv2:minimum -1.0 ;
@@ -303,7 +293,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 27 ;
+		lv2:index 26 ;
 		lv2:symbol "error" ;
 		lv2:name "Pitch Error";
 		lv2:minimum -1.0 ;
@@ -311,7 +301,7 @@
 	] , [
 		a lv2:OutputPort ,
 			lv2:ControlPort ;
-		lv2:index 28 ;
+		lv2:index 27 ;
 		lv2:symbol "latency" ;
 		lv2:name "latency";
 		lv2:minimum 0 ;
