@@ -515,6 +515,14 @@ static bool keysel_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev) {
 	};
 
 	font = pango_font_description_from_string("Sans 12px");
+
+	if (ui->nfo) {
+		cairo_save (cr);
+		cairo_scale (cr, ui->rw->widget_scale, ui->rw->widget_scale);
+		write_text_full (cr, ui->nfo, font, 10, (rw->area.height - 5) / ui->rw->widget_scale, 0, 6, c_wht);
+		cairo_restore (cr);
+	}
+
 	for (int y = 0; y < nbtn_row; ++y) {
 		for (int x = 0; x < nbtn_col; ++x) {
 			int pos = x + y * nbtn_col;
