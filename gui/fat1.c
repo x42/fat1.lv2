@@ -147,10 +147,9 @@ static const char* tooltips[] = {
 		"semitones to the pitch correction. With the Correction\n"
 		"control set to zero the result is a constant pitch change.\n</markup>",
 
-	"<markup><b>Fast mode.</b> Reduces latency by reading the buffer\n"
-		"before the note correction has been computed. This adds\n"
-		"some delay before every note correction but can improve\n"
-		"the singer's comfort in live or recording situations.</markup>"
+	"<markup><b>Fast mode.</b> Reduces latency by initially playing\n"
+		"original sound until the note correction has been computed.\n"
+		"This may improve a singer's comfort in live or recording situations.</markup>"
 };
 
 float ctrl_to_gui (const uint32_t c, const float v) {
@@ -1052,8 +1051,8 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 
 		robtk_lbl_annotation_callback(ui->lbl_ctrl[i], ttip_handler, ui);
 	
-		rob_table_attach (ui->ctbl, GSP_W (ui->spn_ctrl[i]), i + 1, i + 2, 0, 4, 0, 0, RTK_EXANDF, RTK_SHRINK);
-		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 1, i + 2, 4, 5, 0, 0, RTK_EXANDF, RTK_SHRINK);
+		rob_table_attach (ui->ctbl, GSP_W (ui->spn_ctrl[i]), i + 2, i + 3, 0, 4, 0, 0, RTK_EXANDF, RTK_SHRINK);
+		rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[i]), i + 2, i + 3, 4, 5, 0, 0, RTK_EXANDF, RTK_SHRINK);
 	}
 
 	robtk_dial_set_detent_default (ui->spn_ctrl[3], false);
@@ -1097,20 +1096,6 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 			ui->spn_ctrl[4]->dcol[0][2] = .05;
 	}
 
-
-	/* fast mode control */
-	ui->lbl_ctrl[5] = robtk_lbl_new ("Fast");
-	ui->btn_fast = robtk_cbtn_new ("Fast", GBT_LED_LEFT, FALSE);
-	robtk_cbtn_set_callback (ui->btn_fast, cb_btn_fast, ui);
-
-	robtk_cbtn_set_color_on (ui->btn_fast,  0.0, 1.0, 0.0);
-	robtk_cbtn_set_color_off (ui->btn_fast, 0.0, 0.3, 0.0);
-
-	rob_table_attach (ui->ctbl, robtk_cbtn_widget (ui->btn_fast), 6, 7, 2, 3, 20, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[5]), 6, 7, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
-	robtk_lbl_annotation_callback(ui->lbl_ctrl[5], ttip_handler, ui);
-
-
 	/* mode + midi channel */
 	ui->sel_mchn = robtk_select_new ();
 	robtk_select_add_item (ui->sel_mchn, 0, "Omni");
@@ -1136,17 +1121,33 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 		robtk_select_set_touch (ui->sel_mode, ui->touch->touch, ui->touch->handle, FAT_MODE);
 	}
 
-	ui->lbl_mode = robtk_lbl_new ("Mode");
-	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.");
+	ui->lbl_mode = robtk_lbl_new ("Mode:");
+	ui->lbl_mchn = robtk_lbl_new ("MIDI Chn.:");
 	ui->btn_panic = robtk_pbtn_new ("MIDI Panic");
 	robtk_pbtn_set_callback (ui->btn_panic, cb_btn_panic, ui);
 
-	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 0, 1, 2, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 0, 1, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
-
+	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mode), 0, 1, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
 	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_mchn), 0, 1, 2, 3, 2, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mchn), 0, 1, 3, 4, 2, 0, RTK_EXANDF, RTK_SHRINK);
-	rob_table_attach (ui->ctbl, robtk_pbtn_widget (ui->btn_panic), 0, 1, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
+
+	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mode), 1, 2, 1, 2, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GSL_W (ui->sel_mchn), 1, 2, 2, 3, 2, 0, RTK_EXANDF, RTK_SHRINK);
+
+	/* MIDI Panic Btn */
+	rob_table_attach (ui->ctbl, robtk_pbtn_widget (ui->btn_panic), 0, 1, 3, 4, 2, 0, RTK_EXANDF, RTK_SHRINK);
+
+	/* fast mode control */
+	ui->lbl_ctrl[5] = robtk_lbl_new ("Fast Mode");
+	ui->btn_fast = robtk_cbtn_new ("Fast", GBT_LED_LEFT, FALSE);
+	robtk_cbtn_set_callback (ui->btn_fast, cb_btn_fast, ui);
+
+	robtk_cbtn_set_color_on (ui->btn_fast,  0.0, 1.0, 0.0);
+	robtk_cbtn_set_color_off (ui->btn_fast, 0.0, 0.3, 0.0);
+
+	rob_table_attach (ui->ctbl, robtk_cbtn_widget (ui->btn_fast), 1, 2, 3, 4, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	rob_table_attach (ui->ctbl, GLB_W (ui->lbl_ctrl[5]),          1, 2, 4, 5, 2, 0, RTK_EXANDF, RTK_SHRINK);
+	robtk_lbl_annotation_callback(ui->lbl_ctrl[5], ttip_handler, ui);
+
+
 
 	/* top-level packing */
 	rob_hbox_child_pack (ui->rw, ui->m0, TRUE, TRUE);
