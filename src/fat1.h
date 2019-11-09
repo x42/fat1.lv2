@@ -11,14 +11,14 @@ typedef enum {
 	FAT_CORR,
 	FAT_OFFS,
 	FAT_PBST, // 10
+	FAT_FAST,
 
 	FAT_NOTE, // + 12 notes
-	FAT_MASK  = 23,
+	FAT_MASK  = 24,
 	FAT_NSET,
 	FAT_BEND,
 	FAT_ERRR,
 	FAT_LTNC,
 	FAT_SCALE, // +12 notes (microtonal only)
-	FAT_FAST,
 	FAT_LAST = 41
 } PortIndex;

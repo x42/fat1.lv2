@@ -1,7 +1,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 28 ;
+	    lv2:index 29 ;
 	    lv2:symbol "scale00" ;
 	    lv2:name "Note Tuning (C)";
 	    lv2:default 0 ;
@@ -10,7 +10,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 29 ;
+	    lv2:index 30 ;
 	    lv2:symbol "scale01" ;
 	    lv2:name "Note Tuning (C#)";
 	    lv2:default 0 ;
@@ -19,7 +19,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 30 ;
+	    lv2:index 31 ;
 	    lv2:symbol "scale02" ;
 	    lv2:name "Note Tuning (D)";
 	    lv2:default 0 ;
@@ -28,7 +28,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 31 ;
+	    lv2:index 32 ;
 	    lv2:symbol "scale03" ;
 	    lv2:name "Note Tuning (D#)";
 	    lv2:default 0 ;
@@ -37,7 +37,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 32 ;
+	    lv2:index 33 ;
 	    lv2:symbol "scale04" ;
 	    lv2:name "Note Tuning (E)";
 	    lv2:default 0 ;
@@ -46,7 +46,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 33 ;
+	    lv2:index 34 ;
 	    lv2:symbol "scale05" ;
 	    lv2:name "Note Tuning (F)";
 	    lv2:default 0 ;
@@ -55,7 +55,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 34 ;
+	    lv2:index 35 ;
 	    lv2:symbol "scale06" ;
 	    lv2:name "Note Tuning (F#)";
 	    lv2:default 0 ;
@@ -64,7 +64,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 35 ;
+	    lv2:index 36 ;
 	    lv2:symbol "scale07" ;
 	    lv2:name "Note Tuning (G)";
 	    lv2:default 0 ;
@@ -73,7 +73,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 36 ;
+	    lv2:index 37 ;
 	    lv2:symbol "scale08" ;
 	    lv2:name "Note Tuning (G#)";
 	    lv2:default 0 ;
@@ -82,7 +82,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 37 ;
+	    lv2:index 38 ;
 	    lv2:symbol "scale09" ;
 	    lv2:name "Note Tuning (A)";
 	    lv2:default 0 ;
@@ -91,7 +91,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 38 ;
+	    lv2:index 39 ;
 	    lv2:symbol "scale10" ;
 	    lv2:name "Note Tuning (A#)";
 	    lv2:default 0 ;
@@ -100,7 +100,7 @@
 	] , [
 	    a lv2:InputPort ,
 	        lv2:ControlPort ;
-	    lv2:index 39 ;
+	    lv2:index 40 ;
 	    lv2:symbol "scale11" ;
 	    lv2:name "Note Tuning (B)";
 	    lv2:default 0 ;

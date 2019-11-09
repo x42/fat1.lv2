@@ -23,6 +23,7 @@ static const RtkLv2Description _fat1_micro = {
 		{ "corr", CONTROL_IN, 1.000000, 0.000000, 1.000000, "Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato."},
 		{ "offset", CONTROL_IN, 0.000000, -2.000000, 2.000000, "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change."},
 		{ "bendrange", CONTROL_IN, 2.000000, 0.000000, 7.000000, "Configures the effect range of MIDI pitch-bend messages. Pitch-bend is added to the pitch correction offset."},
+		{ "fastmode", CONTROL_IN, 0.000000, 0.000000, 1.000000, "Reduces latency by allowing initially uncorrected signal. This can be useful in live situations."},
 		{ "m00", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C"},
 		{ "m01", CONTROL_IN, 1.000000, 0.000000, 1.000000, "C#"},
 		{ "m02", CONTROL_IN, 1.000000, 0.000000, 1.000000, "D"},
@@ -52,7 +53,6 @@ static const RtkLv2Description _fat1_micro = {
 		{ "scale09", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A)"},
 		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
 		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
-		{ "fast", CONTROL_IN, 0.000000, 0.000000, 1.000000, " Reduces latency by reading the buffer before the note correction has been computed. This adds some delay before every note correction but can improve the singer's comfort in live or recording situations"},
 	}
 	, 41 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
@@ -66,5 +66,5 @@ static const RtkLv2Description _fat1_micro = {
 	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info
-	, 27 // uint32_t latency_ctrl_port
+	, 28 // uint32_t latency_ctrl_port
 };
