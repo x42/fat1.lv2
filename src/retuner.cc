@@ -34,7 +34,8 @@ Retuner::Retuner (int fsamp) :
     _corrfilt (1.0f),
     _corrgain (1.0f),
     _corroffs (0.0f),
-    _notemask (0xFFF)
+    _notemask (0xFFF),
+    _fastmode (false)
 {
     int   i, h;
     float t, x, y;
@@ -138,6 +139,14 @@ Retuner::Retuner (int fsamp) :
     for (int i = 0; i < 12; ++i) {
         _notescale[i] = i;
     }
+
+    // latency compensation for fast mode
+    if (_upsamp) {
+        _latcomp = _ipsize / 2 - _frsize * 4;
+    } else {
+        _latcomp = _ipsize / 2 - _frsize * 2;
+    }
+
 }
 
 
@@ -156,7 +165,7 @@ Retuner::~Retuner (void)
 
 int Retuner::process (int nfram, float *inp, float *out)
 {
-    int    i, k, fi;
+    int    i, ii, k, fi, latcomp;
     float  ph, dp, r1, r2, dr, u1, u2, v;
 
     // Pitch shifting is done by resampling the input at the
@@ -175,7 +184,18 @@ int Retuner::process (int nfram, float *inp, float *out)
 
     // No assumptions are made about fragments being aligned
     // with process() calls, so we may be in the middle of
-    // a fragment here. 
+    // a fragment here.
+
+
+    // Fast mode latency compensation is done by reading samples
+    // from the input buffer before their associated pitch has been computed.
+    // this adds some delay before every note correction but can improve
+    // the singer's comfort in live or recording situations
+    if (_fastmode) {
+        latcomp = _latcomp;
+    } else {
+        latcomp = 0;
+    }
 
     while (nfram)
     {
@@ -218,9 +238,15 @@ int Retuner::process (int nfram, float *inp, float *out)
             while (k--)
             {
                 i = (int) r1;
-		u1 = cubic (_ipbuff + i, r1 - i);
+                ii = i + latcomp;
+                if (ii >= _ipsize) ii -= _ipsize;
+                u1 = cubic (_ipbuff + ii, r1 - i);
+
                 i = (int) r2;
-		u2 = cubic (_ipbuff + i, r2 - i);
+                ii = i + latcomp;
+                if (ii >= _ipsize) ii -= _ipsize;
+                u2 = cubic (_ipbuff + ii, r2 - i);
+
                 v = _xffunc [fi++];
                 *out++ = (1 - v) * u1 + v * u2;
                 r1 += dr;
@@ -236,7 +262,10 @@ int Retuner::process (int nfram, float *inp, float *out)
             while (k--)
             {
                 i = (int) r1;
-		*out++ = cubic (_ipbuff + i, r1 - i);
+                ii = i + latcomp;
+                if (ii >= _ipsize) ii -= _ipsize;
+
+                *out++ = cubic (_ipbuff + ii, r1 - i);
                 r1 += dr;
                 if (r1 >= _ipsize) r1 -= _ipsize;
             }

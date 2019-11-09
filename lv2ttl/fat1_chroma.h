@@ -10,7 +10,7 @@ static const RtkLv2Description _fat1_chroma = {
 	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune" // const char *plugin_human_id
-	, (const struct LV2Port[28])
+	, (const struct LV2Port[29])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -40,16 +40,17 @@ static const RtkLv2Description _fat1_chroma = {
 		{ "bend", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Bend"},
 		{ "error", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Error"},
 		{ "latency", CONTROL_OUT, nan, 0.000000, 4096.000000, "latency"},
+		{ "fast", CONTROL_IN, 0.000000, 0.000000, 1.000000, "Reduces latency by reading the buffer before the note correction has been computed. This adds some delay before every note correction but can improve the singer's comfort in live or recording situations"},
 	}
-	, 28 // uint32_t nports_total
+	, 29 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 25 // uint32_t nports_ctrl
-	, 20 // uint32_t nports_ctrl_in
+	, 26 // uint32_t nports_ctrl
+	, 21 // uint32_t nports_ctrl_in
 	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info

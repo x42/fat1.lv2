@@ -72,6 +72,11 @@ public:
         _notescale[i] = i + v;
     }
 
+    void set_fastmode (float v)
+    {
+        _fastmode = (bool) v;
+    }
+
     int get_noteset (void)
     {
         int k;
@@ -130,7 +135,8 @@ private:
 		LV2AT::Resampler _resampler;
 
     float            _notescale[12];
-
+    bool             _fastmode;
+    int              _latcomp;
 };
 
 };

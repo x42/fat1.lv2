@@ -19,5 +19,6 @@ typedef enum {
 	FAT_ERRR,
 	FAT_LTNC,
 	FAT_SCALE, // +12 notes (microtonal only)
-	FAT_LAST = 40
+	FAT_FAST,
+	FAT_LAST = 41
 } PortIndex;

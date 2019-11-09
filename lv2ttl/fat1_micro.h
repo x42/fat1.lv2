@@ -10,7 +10,7 @@ static const RtkLv2Description _fat1_micro = {
 	, 0 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune (microtonal)" // const char *plugin_human_id
-	, (const struct LV2Port[40])
+	, (const struct LV2Port[41])
 	{
 		{ "midiin", MIDI_IN, nan, nan, nan, "MIDI In"},
 		{ "in", AUDIO_IN, nan, nan, nan, "Input"},
@@ -52,16 +52,17 @@ static const RtkLv2Description _fat1_micro = {
 		{ "scale09", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A)"},
 		{ "scale10", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (A#)"},
 		{ "scale11", CONTROL_IN, 0.000000, -1.000000, 1.000000, "Note Tuning (B)"},
+		{ "fast", CONTROL_IN, 0.000000, 0.000000, 1.000000, " Reduces latency by reading the buffer before the note correction has been computed. This adds some delay before every note correction but can improve the singer's comfort in live or recording situations"},
 	}
-	, 40 // uint32_t nports_total
+	, 41 // uint32_t nports_total
 	, 1 // uint32_t nports_audio_in
 	, 1 // uint32_t nports_audio_out
 	, 1 // uint32_t nports_midi_in
 	, 0 // uint32_t nports_midi_out
 	, 0 // uint32_t nports_atom_in
 	, 0 // uint32_t nports_atom_out
-	, 37 // uint32_t nports_ctrl
-	, 32 // uint32_t nports_ctrl_in
+	, 38 // uint32_t nports_ctrl
+	, 33 // uint32_t nports_ctrl_in
 	, 5 // uint32_t nports_ctrl_out
 	, 8192 // uint32_t min_atom_bufsiz
 	, false // bool send_time_info

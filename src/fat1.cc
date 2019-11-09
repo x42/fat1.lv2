@@ -223,7 +223,14 @@ run (LV2_Handle instance, uint32_t n_samples)
 {
 	Fat1* self = (Fat1*)instance;
 
-	*self->port [FAT_LTNC] = self->latency;
+	self->retuner->set_fastmode (*self->port [FAT_FAST]);
+
+	if (*self->port [FAT_FAST]) {
+		*self->port [FAT_LTNC] = self->latency / 4;
+	} else {
+		*self->port [FAT_LTNC] = self->latency;
+	}
+
 
 	if (!self->midiin || n_samples == 0) {
 		return;
