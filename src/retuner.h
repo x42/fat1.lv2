@@ -136,7 +136,7 @@ private:
 
     float            _notescale[12];
     bool             _fastmode;
-    int              _latcomp;
+    int              _readahed;
 };
 
 };
