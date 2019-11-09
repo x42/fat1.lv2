@@ -2,7 +2,8 @@
 
 typedef enum {
 	FAT_MIDI_IN = 0,
-	FAT_INPUT, FAT_OUTPUT,
+	FAT_INPUT,
+	FAT_OUTPUT,
 	FAT_MODE,
 	FAT_MCHN,
 	FAT_TUNE,
@@ -14,7 +15,7 @@ typedef enum {
 	FAT_FAST,
 
 	FAT_NOTE, // + 12 notes
-	FAT_MASK  = 24,
+	FAT_MASK = 24,
 	FAT_NSET,
 	FAT_BEND,
 	FAT_ERRR,

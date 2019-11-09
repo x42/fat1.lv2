@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 //  Copyright (C) 2006-2012 Fons Adriaensen <fons@linuxaudio.org>
-//    
+//
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation; either version 3 of the License, or
@@ -17,59 +17,66 @@
 //
 // ----------------------------------------------------------------------------
 
-
 #ifndef __RESAMPLER_TABLE_H
 #define __RESAMPLER_TABLE_H
 
-
 #include <pthread.h>
-
 
 namespace LV2AT {
 
 class Resampler_mutex
 {
 private:
+	friend class Resampler_table;
 
-    friend class Resampler_table;
+	Resampler_mutex (void)
+	{
+		pthread_mutex_init (&_mutex, 0);
+	}
+	~Resampler_mutex (void)
+	{
+		pthread_mutex_destroy (&_mutex);
+	}
+	void
+	lock (void)
+	{
+		pthread_mutex_lock (&_mutex);
+	}
+	void
+	unlock (void)
+	{
+		pthread_mutex_unlock (&_mutex);
+	}
 
-    Resampler_mutex (void) { pthread_mutex_init (&_mutex, 0); }
-    ~Resampler_mutex (void) { pthread_mutex_destroy (&_mutex); }
-    void lock (void) { pthread_mutex_lock (&_mutex); }
-    void unlock (void) { pthread_mutex_unlock (&_mutex); }
-
-    pthread_mutex_t  _mutex;
+	pthread_mutex_t _mutex;
 };
-
 
 class Resampler_table
 {
 public:
-
-    static void print_list (void);
+	static void print_list (void);
 
 private:
+	Resampler_table (double fr, unsigned int hl, unsigned int np);
+	~Resampler_table (void);
 
-    Resampler_table (double fr, unsigned int hl, unsigned int np);
-    ~Resampler_table (void);
+	friend class Resampler;
+	friend class VResampler;
 
-    friend class Resampler;
-    friend class VResampler;
+	Resampler_table* _next;
+	unsigned int     _refc;
+	float*           _ctab;
+	double           _fr;
+	unsigned int     _hl;
+	unsigned int     _np;
 
-    Resampler_table     *_next;
-    unsigned int         _refc;
-    float               *_ctab;
-    double               _fr;
-    unsigned int         _hl;
-    unsigned int         _np;
+	static Resampler_table* create (double fr, unsigned int hl, unsigned int np);
+	static void             destroy (Resampler_table* T);
 
-    static Resampler_table *create (double fr, unsigned int hl, unsigned int np);
-    static void destroy (Resampler_table *T);
-
-    static Resampler_table  *_list;
-    static Resampler_mutex   _mutex;
+	static Resampler_table* _list;
+	static Resampler_mutex  _mutex;
 };
 
-};
+}; // namespace LV2AT
 
 #endif

@@ -16,23 +16,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 #include <lv2/lv2plug.in/ns/ext/log/logger.h>
+#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 
 #include "fat1.h"
 #include "retuner.h"
 
 static pthread_mutex_t fftw_planner_lock = PTHREAD_MUTEX_INITIALIZER;
-static unsigned int instance_count = 0;
+static unsigned int    instance_count    = 0;
 
 typedef struct {
 	LV2_URID atom_Sequence;
@@ -48,19 +48,19 @@ typedef struct {
 	LV2_URID atom_eventTransfer;
 
 	/* LV2 Output */
-	LV2_Log_Log* log;
+	LV2_Log_Log*   log;
 	LV2_Log_Logger logger;
 
 	/* I/O Ports */
-	float* port [FAT_LAST];
+	float* port[FAT_LAST];
 
 	/* internal state */
 	LV2AT::Retuner* retuner;
 
-	int notes [12];
-	int notemask;
-	int midimask;
-	int midichan;
+	int   notes[12];
+	int   notemask;
+	int   midimask;
+	int   midichan;
 	float pitchbend;
 	float latency;
 
@@ -72,38 +72,42 @@ typedef struct {
 	int      noteset;
 } Fat1;
 
-
 /* *****************************************************************************
  * helper functions
  */
 
-static void clear_midimask (Fat1* self)
+static void
+clear_midimask (Fat1* self)
 {
 	for (int i = 0; i < 12; ++i) {
-		self->notes [i] = 0;
+		self->notes[i] = 0;
 	}
-	self->midimask = 0;
+	self->midimask  = 0;
 	self->pitchbend = 0;
 }
 
-static void update_midimask (Fat1* self)
+static void
+update_midimask (Fat1* self)
 {
 	self->midimask = 0;
 	int b, i;
 	for (i = 0, b = 1; i < 12; i++, b <<= 1) {
-		if (self->notes [i]) self->midimask |= b;
+		if (self->notes[i])
+			self->midimask |= b;
 	}
 }
 
-static int midi_14bit (const uint8_t * const b) {
+static int
+midi_14bit (const uint8_t* const b)
+{
 	return (b[1]) | (b[2] << 7);
 }
 
 static int
-parse_midi (Fat1* self,
-            uint32_t tme,
+parse_midi (Fat1*                self,
+            uint32_t             tme,
             const uint8_t* const msg,
-            const uint32_t size)
+            const uint32_t       size)
 {
 	if (size != 3) {
 		return 0;
@@ -116,19 +120,19 @@ parse_midi (Fat1* self,
 				self->pitchbend = (midi_14bit (msg) - 8192) / 8192.f;
 				break;
 			case 0xb0:
-				if ( (n == 123 || n == 120) && msg[2] == 0) { // midi-panic
+				if ((n == 123 || n == 120) && msg[2] == 0) { // midi-panic
 					clear_midimask (self);
 				}
 				break;
 			case 0x90:
 				if (msg[2] > 0) {
-					self->notes [n % 12] += 1;
+					self->notes[n % 12] += 1;
 					return 1;
 				}
 				// no break -- fallthrough, note-on velocity 0
 			case 0x80:
-				if (self->notes [n % 12]) {
-					self->notes [n % 12] -= 1;
+				if (self->notes[n % 12]) {
+					self->notes[n % 12] -= 1;
 					return 1;
 				}
 			default:
@@ -148,12 +152,12 @@ instantiate (const LV2_Descriptor*     descriptor,
              const char*               bundle_path,
              const LV2_Feature* const* features)
 {
-	Fat1* self = (Fat1*)calloc (1, sizeof (Fat1));
-	LV2_URID_Map* map = NULL;
+	Fat1*         self = (Fat1*)calloc (1, sizeof (Fat1));
+	LV2_URID_Map* map  = NULL;
 
-	if (0 == strcmp(descriptor->URI, FAT1_URI)) {
+	if (0 == strcmp (descriptor->URI, FAT1_URI)) {
 		self->microtonal = false;
-	} else if (0 == strcmp(descriptor->URI, FAT1_URI "#microtonal")) {
+	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#microtonal")) {
 		self->microtonal = true;
 	} else {
 		free (self);
@@ -161,7 +165,7 @@ instantiate (const LV2_Descriptor*     descriptor,
 	}
 
 	int i;
-	for (i=0; features[i]; ++i) {
+	for (i = 0; features[i]; ++i) {
 		if (!strcmp (features[i]->URI, LV2_URID__map)) {
 			map = (LV2_URID_Map*)features[i]->data;
 		} else if (!strcmp (features[i]->URI, LV2_LOG__log)) {
@@ -177,10 +181,10 @@ instantiate (const LV2_Descriptor*     descriptor,
 		return NULL;
 	}
 
-	pthread_mutex_lock(&fftw_planner_lock);
+	pthread_mutex_lock (&fftw_planner_lock);
 	self->retuner = new LV2AT::Retuner (rate);
 	++instance_count;
-	pthread_mutex_unlock(&fftw_planner_lock);
+	pthread_mutex_unlock (&fftw_planner_lock);
 
 	self->notemask = 0xfff;
 	self->midichan = -1;
@@ -200,7 +204,7 @@ instantiate (const LV2_Descriptor*     descriptor,
 		self->latency = 4096;
 	}
 	self->noteset_update_interval = rate / 20;
-	self->noteset_update_counter = self->noteset_update_interval;
+	self->noteset_update_counter  = self->noteset_update_interval;
 	return (LV2_Handle)self;
 }
 
@@ -214,7 +218,7 @@ connect_port (LV2_Handle instance,
 	if (port == FAT_MIDI_IN) {
 		self->midiin = (const LV2_Atom_Sequence*)data;
 	} else if (port < FAT_LAST) {
-		self->port[port] = (float*) data;
+		self->port[port] = (float*)data;
 	}
 }
 
@@ -223,41 +227,42 @@ run (LV2_Handle instance, uint32_t n_samples)
 {
 	Fat1* self = (Fat1*)instance;
 
-	self->retuner->set_fastmode (*self->port [FAT_FAST]);
+	self->retuner->set_fastmode (*self->port[FAT_FAST]);
 
-	if (*self->port [FAT_FAST]) {
-		*self->port [FAT_LTNC] = self->latency / 4;
+	if (*self->port[FAT_FAST]) {
+		*self->port[FAT_LTNC] = self->latency / 4;
 	} else {
-		*self->port [FAT_LTNC] = self->latency;
+		*self->port[FAT_LTNC] = self->latency;
 	}
-
 
 	if (!self->midiin || n_samples == 0) {
 		return;
 	}
 
 	/* set mode and midi-channel */
-	const int mchn = rint (*self->port [FAT_MCHN]);
+	const int mchn = rint (*self->port[FAT_MCHN]);
 	if (mchn <= 0 || mchn > 16) {
 		self->midichan = -1;
 	} else {
 		self->midichan = mchn - 1;
 	}
 
-	int mode = rint (*self->port [FAT_MODE]);
-	if (mode < 0) mode = 0;
-	if (mode > 2) mode = 2;
+	int mode = rint (*self->port[FAT_MODE]);
+	if (mode < 0)
+		mode = 0;
+	if (mode > 2)
+		mode = 2;
 
 	if (mode == 2) {
 		clear_midimask (self);
 	}
 
 	/* Process incoming midi events */
-	bool update_midi = false;
-	LV2_Atom_Event* ev = lv2_atom_sequence_begin (&(self->midiin)->body);
+	bool            update_midi = false;
+	LV2_Atom_Event* ev          = lv2_atom_sequence_begin (&(self->midiin)->body);
 	while (!lv2_atom_sequence_is_end (&(self->midiin)->body, (self->midiin)->atom.size, ev)) {
 		if (ev->body.type == self->midi_MidiEvent) {
-			update_midi |= parse_midi (self, ev->time.frames, (uint8_t*)(ev+1), ev->body.size);
+			update_midi |= parse_midi (self, ev->time.frames, (uint8_t*)(ev + 1), ev->body.size);
 
 		} else if (ev->body.type == self->atom_Object) {
 			const LV2_Atom_Object* obj = (LV2_Atom_Object*)&ev->body;
@@ -275,7 +280,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 	if (mode != 1) {
 		self->notemask = 0;
 		for (int i = 0; i < 12; ++i) {
-			if (*self->port [FAT_NOTE + i] > 0) {
+			if (*self->port[FAT_NOTE + i] > 0) {
 				self->notemask |= 1 << i;
 			}
 		}
@@ -287,7 +292,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 			notes = self->midimask;
 			break;
 		case 2:
-			notes = self->notemask;
+			notes           = self->notemask;
 			self->pitchbend = 0.f;
 			break;
 		default:
@@ -295,41 +300,41 @@ run (LV2_Handle instance, uint32_t n_samples)
 	}
 
 	/* push config to retuner */
-	self->retuner->set_refpitch (*self->port [FAT_TUNE]);
-	self->retuner->set_notebias (*self->port [FAT_BIAS]);
-	self->retuner->set_corrfilt (*self->port [FAT_FILT]);
-	self->retuner->set_corrgain (*self->port [FAT_CORR]);
-	self->retuner->set_corroffs (*self->port [FAT_OFFS] + *self->port [FAT_PBST] * self->pitchbend);
+	self->retuner->set_refpitch (*self->port[FAT_TUNE]);
+	self->retuner->set_notebias (*self->port[FAT_BIAS]);
+	self->retuner->set_corrfilt (*self->port[FAT_FILT]);
+	self->retuner->set_corrgain (*self->port[FAT_CORR]);
+	self->retuner->set_corroffs (*self->port[FAT_OFFS] + *self->port[FAT_PBST] * self->pitchbend);
 	self->retuner->set_notemask (notes);
 
 	if (self->microtonal) {
 		for (int i = 0; i < 12; ++i) {
-			self->retuner->set_notescale (i, *self->port [FAT_SCALE + i]);
+			self->retuner->set_notescale (i, *self->port[FAT_SCALE + i]);
 		}
 	}
 
 	/* process */
-	self->retuner->process (n_samples, self->port [FAT_INPUT], self->port [FAT_OUTPUT]);
+	self->retuner->process (n_samples, self->port[FAT_INPUT], self->port[FAT_OUTPUT]);
 
 	self->noteset_update_counter += n_samples;
 
 	if (self->noteset_update_counter > self->noteset_update_interval) {
-		self->noteset = self->retuner->get_noteset ();
+		self->noteset                = self->retuner->get_noteset ();
 		self->noteset_update_counter = 0;
 	}
 
 	/* report */
-	*self->port [FAT_MASK] = notes;
-	*self->port [FAT_NSET] = self->noteset;
-	*self->port [FAT_ERRR] = self->retuner->get_error ();
-	*self->port [FAT_BEND] = self->pitchbend;
+	*self->port[FAT_MASK] = notes;
+	*self->port[FAT_NSET] = self->noteset;
+	*self->port[FAT_ERRR] = self->retuner->get_error ();
+	*self->port[FAT_BEND] = self->pitchbend;
 }
 
 static void
 cleanup (LV2_Handle instance)
 {
 	Fat1* self = (Fat1*)instance;
-	pthread_mutex_lock(&fftw_planner_lock);
+	pthread_mutex_lock (&fftw_planner_lock);
 	delete self->retuner;
 	if (instance_count > 0) {
 		--instance_count;
@@ -348,10 +353,9 @@ cleanup (LV2_Handle instance)
 		fftwf_cleanup ();
 	}
 #endif
-	pthread_mutex_unlock(&fftw_planner_lock);
+	pthread_mutex_unlock (&fftw_planner_lock);
 	free (instance);
 }
-
 
 static void
 activate (LV2_Handle instance)
@@ -388,23 +392,22 @@ static const LV2_Descriptor descriptor_microtonal = {
 	extension_data
 };
 
-
 #undef LV2_SYMBOL_EXPORT
 #ifdef _WIN32
-#    define LV2_SYMBOL_EXPORT __declspec(dllexport)
+#  define LV2_SYMBOL_EXPORT __declspec(dllexport)
 #else
-#    define LV2_SYMBOL_EXPORT  __attribute__ ((visibility ("default")))
+#  define LV2_SYMBOL_EXPORT __attribute__ ((visibility ("default")))
 #endif
 LV2_SYMBOL_EXPORT
 const LV2_Descriptor*
 lv2_descriptor (uint32_t index)
 {
 	switch (index) {
-	case 0:
-		return &descriptor;
-	case 1:
-		return &descriptor_microtonal;
-	default:
-		return NULL;
+		case 0:
+			return &descriptor;
+		case 1:
+			return &descriptor_microtonal;
+		default:
+			return NULL;
 	}
 }
