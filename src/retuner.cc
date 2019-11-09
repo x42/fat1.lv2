@@ -440,6 +440,13 @@ Retuner::findcycle (void)
 		y      = _fftTdata[j];
 		z      = _fftTdata[j + 1];
 		_cycle = j + 0.5f * (x - z) / (z - 2 * y + x - 1e-9f);
+		if (_cycle < 0) {
+			// sometimes the above formula returns -inf
+			// which ends up crashing the process
+			// Cause : x, y, z being floats
+			// -> Could also be fixed by using doubles instead
+			_cycle = 0;
+		}
 	}
 }
 
