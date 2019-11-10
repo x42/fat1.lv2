@@ -174,12 +174,14 @@ Retuner::process (int nfram, float* inp, float* out)
 	// with process() calls, so we may be in the middle of
 	// a fragment here.
 
+	// Fast mode allows reading samples directly from the input,
+	// before the pitch has been computed. This is useful in
+	// live situation.
+	ra = _fastmode ? _readahed : 0;
+
 	while (nfram) {
 
-		// Fast mode allows reading samples directly from the input,
-		// before the pitch has been computed. This is useful in
-		// live situation.
-		ra = _fastmode ? _readahed : 0;
+		// Last read-ahead position for crossfading of Fast mode has changed
 		lra = _lastfastmode ? _readahed : 0;
 
 		// Don't go past the end of the current fragment.
