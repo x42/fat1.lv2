@@ -34,7 +34,8 @@ Retuner::Retuner (int fsamp)
       _corrgain (1.0f),
       _corroffs (0.0f),
       _notemask (0xFFF),
-      _fastmode (false)
+      _fastmode (false),
+      _lastfastmode (false)
 {
 	int   i, h;
 	float t, x, y;
@@ -152,7 +153,7 @@ Retuner::~Retuner (void)
 int
 Retuner::process (int nfram, float* inp, float* out)
 {
-	int   i, ii, k, fi, ra;
+	int   i, ii, k, fi, ra, lra;
 	float ph, dp, r1, r2, dr, u1, u2, v;
 
 	// Pitch shifting is done by resampling the input at the
@@ -173,12 +174,14 @@ Retuner::process (int nfram, float* inp, float* out)
 	// with process() calls, so we may be in the middle of
 	// a fragment here.
 
-	// Fast mode allows reading samples directly from the input,
-	// before the pitch has been computed. This is useful in
-	// live situation.
-	ra = _fastmode ? _readahed : 0;
-
 	while (nfram) {
+
+		// Fast mode allows reading samples directly from the input,
+		// before the pitch has been computed. This is useful in
+		// live situation.
+		ra = _fastmode ? _readahed : 0;
+		lra = _lastfastmode ? _readahed : 0;
+
 		// Don't go past the end of the current fragment.
 		k = _frsize - fi;
 		if (nfram < k)
@@ -217,7 +220,7 @@ Retuner::process (int nfram, float* inp, float* out)
 			// Interpolate and crossfade.
 			while (k--) {
 				i  = (int)r1;
-				ii = i + ra;
+				ii = i + lra;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 				u1 = cubic (_ipbuff + ii, r1 - i);
@@ -237,7 +240,7 @@ Retuner::process (int nfram, float* inp, float* out)
 				if (r2 >= _ipsize)
 					r2 -= _ipsize;
 			}
-		} else if (ra == 0) {
+		} else if (ra == 0 && lra == 0) {
 			// Interpolation only.
 			fi += k;
 			while (k--) {
@@ -247,12 +250,33 @@ Retuner::process (int nfram, float* inp, float* out)
 				if (r1 >= _ipsize)
 					r1 -= _ipsize;
 			}
+		} else if (ra != lra) {
+			// crossfade from/to fastmode
+			while (k--) {
+				i  = (int)r1;
+				ii = i + lra;
+				if (ii >= _ipsize)
+					ii -= _ipsize;
+				u1 = cubic (_ipbuff + ii, r1 - i);
+
+				i  = (int)r1;
+				ii = i + ra;
+				if (ii >= _ipsize)
+					ii -= _ipsize;
+				u2 = cubic (_ipbuff + ii, r1 - i);
+
+				v      = _xffunc[fi++];
+				*out++ = (1 - v) * u1 + v * u2;
+				r1 += dr;
+				if (r1 >= _ipsize)
+					r1 -= _ipsize;
+			}
 		} else {
 			// Interpolation only.
 			fi += k;
 			while (k--) {
 				i  = (int)r1;
-				ii = i + ra;
+				ii = i + lra;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 
@@ -262,6 +286,10 @@ Retuner::process (int nfram, float* inp, float* out)
 					r1 -= _ipsize;
 			}
 		}
+
+
+		_lastfastmode = _fastmode;
+
 
 		// If at end of fragment check for jump.
 		if (fi == _frsize) {
