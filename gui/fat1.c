@@ -1298,6 +1298,9 @@ port_event (LV2UI_Handle handle,
 	else if (port_index == FAT_MCHN) {
 		robtk_select_set_value (ui->sel_mchn, v);
 	}
+	else if (port_index == FAT_FAST) {
+		robtk_cbtn_set_active(ui->btn_fast, v > 0);
+	}
 	else if (port_index >= FAT_NOTE && port_index < FAT_NOTE + 12) {
 		uint32_t k = port_index - FAT_NOTE;
 		if (v > 0) {
