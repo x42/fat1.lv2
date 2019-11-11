@@ -181,7 +181,7 @@ Retuner::process (int nfram, float* inp, float* out)
 
 	while (nfram) {
 
-		// Last read-ahead position for crossfading of Fast mode has changed
+		// Last read-ahead position for crossfading if Fast mode has changed
 		lra = _lastfastmode ? _readahed : 0;
 
 		// Don't go past the end of the current fragment.
