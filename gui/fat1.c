@@ -1343,6 +1343,9 @@ port_event (LV2UI_Handle handle,
 		//uint32_t k = port_index - FAT_SCALE;
 		// TODO microtonal scale
 	}
+	else if (port_index == FAT_FAST) {
+		robtk_cbtn_set_active (ui->btn_fast, v);
+	}
 
 	ui->disable_signals = false;
 }
