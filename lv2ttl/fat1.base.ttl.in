@@ -3,7 +3,7 @@
 	a lv2:Plugin, doap:Project, lv2:PitchPlugin;
 	doap:license <http://usefulinc.com/doap/licenses/gpl>;
 	doap:maintainer <http://gareus.org/rgareus#me>;
-	doap:name "Autotune@NAMESUFFIX@";
+	doap:name "x42-Autotune@NAMESUFFIX@";
 	@VERSION@
 	@UITTL@
 	lv2:optionalFeature lv2:hardRTCapable, log:log;
