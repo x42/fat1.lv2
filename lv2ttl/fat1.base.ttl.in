@@ -6,7 +6,7 @@
 	doap:name "Autotune@NAMESUFFIX@";
 	@VERSION@
 	@UITTL@
-	lv2:optionalFeature lv2:hardRTCapable;
+	lv2:optionalFeature lv2:hardRTCapable, log:log;
 	lv2:requiredFeature urid:map;
 	@MODBRAND@
 	@MODLABEL@

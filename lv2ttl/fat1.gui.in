@@ -1,8 +1,9 @@
 
 @LV2NAME@:ui_gl
 	a @UI_TYPE@ ;
-	opts:supportedOption <http://lv2plug.in/ns/extensions/ui#scaleFactor> ;
+	lv2:requiredFeature urid:map;
 	lv2:optionalFeature opts:options ;
+	opts:supportedOption <http://lv2plug.in/ns/extensions/ui#scaleFactor> ;
 	@UI_REQ@
   .
 
