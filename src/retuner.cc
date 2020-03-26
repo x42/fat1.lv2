@@ -132,9 +132,9 @@ Retuner::Retuner (int fsamp)
 	}
 
 	if (_upsamp) {
-		_readahed = _ipsize / 2 - _frsize * 4;
-	} else {
 		_readahed = _ipsize / 2 - _frsize * 2;
+	} else {
+		_readahed = _ipsize / 2 - _frsize;
 	}
 }
 
