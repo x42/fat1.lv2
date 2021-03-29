@@ -393,6 +393,16 @@ static void ttip_handler (RobWidget* rw, bool on, void *handle) {
 	}
 }
 
+static void
+top_leave_notify (RobWidget* rw)
+{
+	Fat1UI* ui = (Fat1UI*)rw->children[1]->top;
+	if (ui->ctbl->expose_event != rcontainer_expose_event) {
+		ui->ctbl->expose_event    = rcontainer_expose_event;
+		ui->ctbl->parent->resized = TRUE; //full re-expose
+		queue_draw (ui->rw);
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1152,6 +1162,7 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	/* top-level packing */
 	rob_hbox_child_pack (ui->rw, ui->m0, TRUE, TRUE);
 	rob_hbox_child_pack (ui->rw, ui->ctbl, FALSE, TRUE);
+	robwidget_set_leave_notify(ui->rw, top_leave_notify);
 	return ui->rw;
 }
 
