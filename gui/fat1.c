@@ -393,16 +393,6 @@ static void ttip_handler (RobWidget* rw, bool on, void *handle) {
 	}
 }
 
-static void
-top_leave_notify (RobWidget* rw)
-{
-	Fat1UI* ui = (Fat1UI*)rw->children[1]->top;
-	if (ui->ctbl->expose_event != rcontainer_expose_event) {
-		ui->ctbl->expose_event    = rcontainer_expose_event;
-		ui->ctbl->parent->resized = TRUE; //full re-expose
-		queue_draw (ui->rw);
-	}
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -678,6 +668,22 @@ static RobWidget* keysel_mousedown (RobWidget* rw, RobTkBtnEvent *ev) {
 		}
 	}
 	return rcontainer_mousedown (rw, ev);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/* focus out, hide tooltips */
+
+static void
+top_leave_notify (RobWidget* rw)
+{
+	Fat1UI* ui = (Fat1UI*)rw->children[1]->top;
+	if (ui->ctbl->expose_event != rcontainer_expose_event
+	    && ui->ctbl->expose_event != keysel_overlay) {
+		ui->ctbl->expose_event    = rcontainer_expose_event;
+		ui->ctbl->parent->resized = TRUE; //full re-expose
+		queue_draw (ui->rw);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
