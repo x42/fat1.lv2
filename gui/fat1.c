@@ -393,11 +393,16 @@ static void ttip_handler (RobWidget* rw, bool on, void *handle) {
 	}
 }
 
+
+static bool keysel_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev);
+
+
 static void
 top_leave_notify (RobWidget* rw)
 {
 	Fat1UI* ui = (Fat1UI*)rw->children[1]->top;
-	if (ui->ctbl->expose_event != rcontainer_expose_event) {
+	if (ui->ctbl->expose_event != rcontainer_expose_event
+	    && ui->ctbl->expose_event != keysel_overlay) {
 		ui->ctbl->expose_event    = rcontainer_expose_event;
 		ui->ctbl->parent->resized = TRUE; //full re-expose
 		queue_draw (ui->rw);
