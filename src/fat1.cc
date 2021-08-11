@@ -35,10 +35,6 @@ static pthread_mutex_t fftw_planner_lock = PTHREAD_MUTEX_INITIALIZER;
 static unsigned int    instance_count    = 0;
 
 typedef struct {
-	LV2_URID atom_Sequence;
-} MidiMapURIs;
-
-typedef struct {
 	const LV2_Atom_Sequence* midiin;
 
 	/* URI mapping */

@@ -27,15 +27,15 @@
 using namespace LV2AT;
 
 Retuner::Retuner (int fsamp)
-    : _fsamp (fsamp),
-      _refpitch (440.0f),
-      _notebias (0.0f),
-      _corrfilt (1.0f),
-      _corrgain (1.0f),
-      _corroffs (0.0f),
-      _notemask (0xFFF),
-      _fastmode (false),
-      _lastfastmode (false)
+    : _fsamp (fsamp)
+    , _refpitch (440.0f)
+    , _notebias (0.0f)
+    , _corrfilt (1.0f)
+    , _corrgain (1.0f)
+    , _corroffs (0.0f)
+    , _notemask (0xFFF)
+    , _fastmode (false)
+    , _lastfastmode (false)
 {
 	int   i, h;
 	float t, x, y;
@@ -151,7 +151,7 @@ Retuner::~Retuner (void)
 }
 
 int
-Retuner::process (int nfram, float* inp, float* out)
+Retuner::process (int nfram, float const* inp, float* out)
 {
 	int   i, ii, k, fi, ra, lra;
 	float ph, dp, r1, r2, dr, u1, u2, v;

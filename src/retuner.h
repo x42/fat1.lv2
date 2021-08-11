@@ -32,7 +32,7 @@ public:
 	Retuner (int fsamp);
 	~Retuner (void);
 
-	int process (int nfram, float* inp, float* out);
+	int process (int nfram, float const* inp, float* out);
 
 	void
 	set_refpitch (float v)
@@ -85,9 +85,7 @@ public:
 	int
 	get_noteset (void)
 	{
-		int k;
-
-		k         = _notebits;
+		int k     = _notebits;
 		_notebits = 0;
 		return k;
 	}
@@ -101,7 +99,8 @@ public:
 private:
 	void  findcycle (void);
 	void  finderror (void);
-	float cubic (float* v, float a);
+
+	static float cubic (float* v, float a);
 
 	int              _fsamp;
 	int              _ifmin;
