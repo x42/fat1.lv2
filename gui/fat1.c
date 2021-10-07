@@ -847,6 +847,10 @@ static void m0_leave (RobWidget* handle) {
 
 static RobWidget* m0_mouse_down (RobWidget* handle, RobTkBtnEvent* ev) {
 	Fat1UI* ui = (Fat1UI*)GET_HANDLE (handle);
+	if (robtk_select_get_value (ui->sel_mode) == 1) {
+		return NULL;
+	}
+
 	if (ev->button == 1) {
 		const int n = ui->hover;
 		if (n >= 0 && n < 12 && ui->touch) {
@@ -854,7 +858,7 @@ static RobWidget* m0_mouse_down (RobWidget* handle, RobTkBtnEvent* ev) {
 		}
 		return handle;
 	}
-	if (ev->button == 3 && robtk_select_get_value (ui->sel_mode) != 1) {
+	if (ev->button == 3) {
 		keysel_toggle (ui);
 	}
 	return NULL;
