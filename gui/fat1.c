@@ -97,7 +97,8 @@ typedef struct {
 	int hover;
 	bool disable_signals;
 
-	uint32_t notes; // selected notes on scale (manual)
+	uint32_t notes; // selected notes on scale (manual, non-scale mode)
+	int      scale; // selected scale (manual, scale-variant)
 	uint32_t mask;
 	uint32_t set;
 	float    bendmult;
@@ -113,6 +114,7 @@ typedef struct {
 	cairo_rectangle_t* tt_pos;
 
 	bool microtonal;
+	bool scales;
 	const char* nfo;
 } Fat1UI;
 
@@ -460,6 +462,34 @@ static bool cb_btn_fast (RobWidget *w, void* handle) {
 /*** scale overlay display ****/
 static void keysel_apply (Fat1UI* ui)
 {
+	if (ui->scales) {
+		if (ui->touch) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE, true);
+		}
+		int k = 0; // val = 0: chromatic (key_note == 7)
+		if (ui->key_note != 7) {
+			switch (ui->key_note) {
+				case 0: k = 0; break;
+				case 1: k = 2; break;
+				case 2: k = 4; break;
+				case 3: k = 5; break;
+				case 4: k = 7; break;
+				case 5: k = 9; break;
+				case 6: k = 11; break;
+			}
+			if (ui->key_mod == 2) { k += 11; }
+			if (ui->key_mod == 1) { ++k; }
+			if (ui->key_majmin == 1) { k += 3; }
+			k = 1 + (k % 12);
+		}
+		float val = k;
+		ui->write (ui->controller, FAT_NOTE, sizeof (float), 0, (const void*) &val);
+		if (ui->touch) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE, false);
+		}
+		return;
+	}
+
 	if (ui->touch) {
 		for (uint32_t n = 0; n < 12; ++n) {
 			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, true);
@@ -814,18 +844,27 @@ static RobWidget* m0_mouse_up (RobWidget* handle, RobTkBtnEvent* ev) {
 		return NULL;
 	}
 
-	float val;
-	if (ui->notes & (1 << n)) {
-		val = 0.f;
-		ui->notes &= ~(1 << n);
+	if (ui->scales) {
+		float val = (n + 1 == ui->scale) ? 0 : n + 1;
+		ui->write (ui->controller, FAT_NOTE, sizeof (float), 0, (const void*) &val);
+		if (ui->touch) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE, false);
+		}
 	} else {
-		val = 1.f;
-		ui->notes |= (1 << n);
-	}
-	ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
 
-	if (ui->touch) {
-		ui->touch->touch (ui->touch->handle, FAT_NOTE + n, false);
+		float val;
+		if (ui->notes & (1 << n)) {
+			val = 0.f;
+			ui->notes &= ~(1 << n);
+		} else {
+			val = 1.f;
+			ui->notes |= (1 << n);
+		}
+		ui->write (ui->controller, FAT_NOTE + n, sizeof (float), 0, (const void*) &val);
+
+		if (ui->touch) {
+			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, false);
+		}
 	}
 
 	queue_draw (ui->m0);
@@ -854,7 +893,11 @@ static RobWidget* m0_mouse_down (RobWidget* handle, RobTkBtnEvent* ev) {
 	if (ev->button == 1) {
 		const int n = ui->hover;
 		if (n >= 0 && n < 12 && ui->touch) {
-			ui->touch->touch (ui->touch->handle, FAT_NOTE + n, true);
+			if (ui->scales) {
+				ui->touch->touch (ui->touch->handle, FAT_NOTE, true);
+			} else {
+				ui->touch->touch (ui->touch->handle, FAT_NOTE + n, true);
+			}
 		}
 		return handle;
 	}
@@ -1234,8 +1277,13 @@ instantiate (
 
 	if (0 == strcmp(plugin_uri, FAT1_URI)) {
 		ui->microtonal = false;
+		ui->scales     = false;
 	} else if (0 == strcmp(plugin_uri, FAT1_URI "#microtonal")) {
 		ui->microtonal = true;
+		ui->scales     = false;
+	} else if (0 == strcmp(plugin_uri, FAT1_URI "#scales")) {
+		ui->microtonal = false;
+		ui->scales     = true;
 	} else {
 		free (ui);
 		return 0;
@@ -1308,6 +1356,21 @@ port_event (LV2UI_Handle handle,
 
 	const float v = *(float*)buffer;
 	ui->disable_signals = true;
+
+	if (ui->scales) {
+		if (port_index > 16) {
+			return;
+		}
+		if (port_index == FAT_NOTE) {
+			int m = v;
+			if (ui->scale != m) {
+				ui->scale = m;
+				queue_draw (ui->m0);
+			}
+		} else if (port_index > FAT_NOTE) {
+			port_index += 11;
+		}
+	}
 
 	if (port_index >= FAT_TUNE && port_index <= FAT_OFFS) {
 		uint32_t ctrl = port_index - FAT_TUNE;

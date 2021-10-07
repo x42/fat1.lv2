@@ -3,8 +3,10 @@
 
 #include "lv2ttl/fat1_chroma.h"
 #include "lv2ttl/fat1_micro.h"
+#include "lv2ttl/fat1_scales.h"
 
 static const RtkLv2Description _plugins[] = {
 	_fat1_micro,
-	_fat1_chroma
+	_fat1_chroma,
+	_fat1_scales
 };

@@ -14,3 +14,8 @@
 	a lv2:Plugin ;
 	lv2:binary <fat1@LIB_EXT@> ;
 	rdfs:seeAlso <fat1.ttl> .
+
+<http://gareus.org/oss/lv2/fat1#scales>
+	a lv2:Plugin ;
+	lv2:binary <fat1@LIB_EXT@> ;
+	rdfs:seeAlso <fat1.ttl> .

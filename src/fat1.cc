@@ -62,6 +62,7 @@ typedef struct {
 
 	bool panic_btn;
 	bool microtonal;
+	bool scales;
 
 	uint32_t noteset_update_interval;
 	uint32_t noteset_update_counter;
@@ -138,6 +139,29 @@ parse_midi (Fat1*                self,
 	return 0;
 }
 
+static int
+set_scale (int scale_id) {
+	if (scale_id <= 0 || scale_id > 12) {
+		/* chromatic */
+		return 4095;
+	}
+
+	static const bool western[12] = {
+		1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1
+	};
+
+	int b, i;
+	int notemask = 0;
+	for (i = 0, b = 1; i < 12; i++, b <<= 1) {
+		int s = (i + 13 - scale_id) % 12;
+		if (western[s]) {
+			notemask |= b;
+		}
+	}
+
+	return notemask;
+}
+
 /* *****************************************************************************
  * LV2 Plugin
  */
@@ -153,8 +177,13 @@ instantiate (const LV2_Descriptor*     descriptor,
 
 	if (0 == strcmp (descriptor->URI, FAT1_URI)) {
 		self->microtonal = false;
+		self->scales     = false;
 	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#microtonal")) {
 		self->microtonal = true;
+		self->scales     = false;
+	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#scales")) {
+		self->microtonal = false;
+		self->scales     = true;
 	} else {
 		free (self);
 		return 0;
@@ -219,6 +248,40 @@ connect_port (LV2_Handle instance,
 }
 
 static void
+connect_port_scales (LV2_Handle instance,
+                     uint32_t   port,
+                     void*      data)
+{
+	Fat1* self = (Fat1*)instance;
+
+	if (port == FAT_MIDI_IN) {
+		self->midiin = (const LV2_Atom_Sequence*)data;
+	} else if (port <= FAT_NOTE) {
+		self->port[port] = (float*)data;
+	} else {
+		switch (port) {
+			case 13:
+				self->port[FAT_MASK] = (float*)data;
+				break;
+			case 14:
+				self->port[FAT_NSET] = (float*)data;
+				break;
+			case 15:
+				self->port[FAT_BEND] = (float*)data;
+				break;
+			case 16:
+				self->port[FAT_ERRR] = (float*)data;
+				break;
+			case 17:
+				self->port[FAT_LTNC] = (float*)data;
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+static void
 run (LV2_Handle instance, uint32_t n_samples)
 {
 	Fat1* self = (Fat1*)instance;
@@ -274,10 +337,14 @@ run (LV2_Handle instance, uint32_t n_samples)
 
 	/* prepare key-range midi/fixed */
 	if (mode != 1) {
-		self->notemask = 0;
-		for (int i = 0; i < 12; ++i) {
-			if (*self->port[FAT_NOTE + i] > 0) {
-				self->notemask |= 1 << i;
+		if (self->scales) {
+			self->notemask = set_scale (rint (*self->port[FAT_NOTE]));
+		} else {
+			self->notemask = 0;
+			for (int i = 0; i < 12; ++i) {
+				if (*self->port[FAT_NOTE + i] > 0) {
+					self->notemask |= 1 << i;
+				}
 			}
 		}
 	}
@@ -388,6 +455,17 @@ static const LV2_Descriptor descriptor_microtonal = {
 	extension_data
 };
 
+static const LV2_Descriptor descriptor_scales = {
+	FAT1_URI "#scales",
+	instantiate,
+	connect_port_scales,
+	activate,
+	run,
+	NULL,
+	cleanup,
+	extension_data
+};
+
 #undef LV2_SYMBOL_EXPORT
 #ifdef _WIN32
 #  define LV2_SYMBOL_EXPORT __declspec(dllexport)
@@ -403,6 +481,8 @@ lv2_descriptor (uint32_t index)
 			return &descriptor;
 		case 1:
 			return &descriptor_microtonal;
+		case 2:
+			return &descriptor_scales;
 		default:
 			return NULL;
 	}

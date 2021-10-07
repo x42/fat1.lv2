@@ -1,0 +1,228 @@
+
+<http://gareus.org/oss/lv2/fat1@URISUFFIX@>
+	a lv2:Plugin, doap:Project, lv2:PitchPlugin;
+	doap:license <http://usefulinc.com/doap/licenses/gpl>;
+	doap:maintainer <http://gareus.org/rgareus#me>;
+	doap:name "x42-Autotune@NAMESUFFIX@";
+	@VERSION@
+	@UITTL@
+	lv2:optionalFeature lv2:hardRTCapable, log:log;
+	lv2:requiredFeature urid:map;
+	@MODBRAND@
+	@MODLABEL@
+	@SIGNATURE@
+	lv2:port [
+		a atom:AtomPort, lv2:InputPort;
+		atom:bufferType atom:Sequence;
+		atom:supports midi:MidiEvent;
+		lv2:index 0;
+		lv2:symbol "midiin";
+		lv2:name "MIDI In";
+		lv2:portProperty lv2:isSideChain;
+	] , [
+		a lv2:AudioPort ,
+			lv2:InputPort ;
+		lv2:index 1 ;
+		lv2:symbol "in" ;
+		lv2:name "Input"
+	] , [
+		a lv2:AudioPort ,
+			lv2:OutputPort ;
+		lv2:index 2 ;
+		lv2:symbol "out" ;
+		lv2:name "Output"
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 3 ;
+		lv2:symbol "mode" ;
+		lv2:name "Mode";
+		lv2:default 0 ;
+		lv2:minimum 0 ;
+		lv2:maximum 2 ;
+		lv2:portProperty lv2:integer, lv2:enumeration;
+		lv2:scalePoint [ rdfs:label  "Auto"; rdf:value 0 ; ] ;
+		lv2:scalePoint [ rdfs:label  "MIDI"; rdf:value 1 ; ] ;
+		lv2:scalePoint [ rdfs:label  "Manual"; rdf:value 2 ; ] ;
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 4 ;
+		lv2:symbol "channelf" ;
+		lv2:name "Filter Channel";
+		lv2:minimum 0 ;
+		lv2:maximum 16 ;
+		lv2:default 0;
+		lv2:scalePoint [ rdfs:label "Any"; rdf:value 0 ];
+		lv2:scalePoint [ rdfs:label "01" ; rdf:value 1 ];
+		lv2:scalePoint [ rdfs:label "02" ; rdf:value 2 ];
+		lv2:scalePoint [ rdfs:label "03" ; rdf:value 3 ];
+		lv2:scalePoint [ rdfs:label "04" ; rdf:value 4 ];
+		lv2:scalePoint [ rdfs:label "05" ; rdf:value 5 ];
+		lv2:scalePoint [ rdfs:label "06" ; rdf:value 6 ];
+		lv2:scalePoint [ rdfs:label "07" ; rdf:value 7 ];
+		lv2:scalePoint [ rdfs:label "08" ; rdf:value 8 ];
+		lv2:scalePoint [ rdfs:label "09" ; rdf:value 9 ];
+		lv2:scalePoint [ rdfs:label "10" ; rdf:value 10 ];
+		lv2:scalePoint [ rdfs:label "11" ; rdf:value 11 ];
+		lv2:scalePoint [ rdfs:label "12" ; rdf:value 12 ];
+		lv2:scalePoint [ rdfs:label "13" ; rdf:value 13 ];
+		lv2:scalePoint [ rdfs:label "14" ; rdf:value 14 ];
+		lv2:scalePoint [ rdfs:label "15" ; rdf:value 15 ];
+		lv2:scalePoint [ rdfs:label "16" ; rdf:value 16 ];
+		lv2:portProperty lv2:integer, lv2:enumeration;
+		rdfs:comment "MIDI Channel (1..16) on which the filter is active; 0: any)." ;
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 5 ;
+		lv2:symbol "tuning" ;
+		lv2:name "Tuning";
+		lv2:default 440.0 ;
+		lv2:minimum 400.0 ;
+		lv2:maximum 480.0 ;
+		units:unit units:hz;
+		pprop:rangeSteps 401;
+		rdfs:comment "This sets the frequency corresponding to 'A' pitch, in other words the required tuning. This will be the default 440 Hz in most cases.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 6 ;
+		lv2:symbol "bias" ;
+		lv2:name "Bias";
+		lv2:default 0.5 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 1.0 ;
+		pprop:rangeSteps 271;
+		rdfs:comment "Normally the pitch estimator will select the enabled note closest to the measured pitch. The Bias control adds some preference for the current note - this allows it to go off-tune more than would be the case otherwise.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 7 ;
+		lv2:symbol "filter" ;
+		lv2:name "Filter";
+		lv2:default 0.1 ;
+		lv2:minimum 0.02 ;
+		lv2:maximum 0.5 ;
+		lv2:scalePoint [ rdfs:label  "Slow"; rdf:value 0.5 ; ] ;
+		lv2:scalePoint [ rdfs:label  "Med";  rdf:value 0.1 ; ] ;
+		lv2:scalePoint [ rdfs:label  "Fast"; rdf:value 0.02 ; ] ;
+		lv2:portProperty pprop:logarithmic;
+		pprop:rangeSteps 201;
+		rdfs:comment "This sets the amount of smoothing on the pitch correction while the current note does not change. If it does change the filter is bypassed and the correction jumps immediately to the new value.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 8 ;
+		lv2:symbol "corr" ;
+		lv2:name "Correction";
+		lv2:default 1.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 1.0 ;
+		pprop:rangeSteps 271;
+		rdfs:comment "Determines how much of the estimated pitch error gets corrected. Full correction may remove expression or vibrato.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 9 ;
+		lv2:symbol "offset" ;
+		lv2:name "Offset";
+		lv2:default 0.0 ;
+		lv2:minimum -2.0 ;
+		lv2:maximum  2.0 ;
+		pprop:rangeSteps 401;
+		units:unit units:semitone12TET;
+		rdfs:comment "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 10 ;
+		lv2:symbol "bendrange" ;
+		lv2:name "Pitch Bend Range";
+		lv2:default 2.0 ;
+		lv2:minimum 0.0 ;
+		lv2:maximum 7.0 ;
+		units:unit units:semitone12TET;
+		rdfs:comment "Configures the effect range of MIDI pitch-bend messages. Pitch-bend is added to the pitch correction offset.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 11 ;
+		lv2:symbol "fastmode" ;
+		lv2:name "Fast Correction";
+		lv2:default 0 ;
+		lv2:minimum 0 ;
+		lv2:maximum 1 ;
+		lv2:portProperty lv2:integer, lv2:toggled;
+		rdfs:comment "Reduces latency by allowing initially uncorrected signal. This can be useful in live situations.";
+	] , [
+		a lv2:InputPort ,
+			lv2:ControlPort ;
+		lv2:index 12 ;
+		lv2:symbol "scale" ;
+		lv2:name "Scale";
+		lv2:default 0 ;
+		lv2:minimum 0 ;
+		lv2:maximum 12 ;
+		lv2:scalePoint [ rdf:value  0; rdfs:label "Chromatic"; ] ;
+		lv2:scalePoint [ rdf:value  1; rdfs:label "C Major"; ] ;
+		lv2:scalePoint [ rdf:value  2; rdfs:label "Db Major"; ] ;
+		lv2:scalePoint [ rdf:value  3; rdfs:label "D Major"; ] ;
+		lv2:scalePoint [ rdf:value  4; rdfs:label "Eb Major"; ] ;
+		lv2:scalePoint [ rdf:value  5; rdfs:label "E Major"; ] ;
+		lv2:scalePoint [ rdf:value  6; rdfs:label "F Major"; ] ;
+		lv2:scalePoint [ rdf:value  7; rdfs:label "F# Major"; ] ;
+		lv2:scalePoint [ rdf:value  8; rdfs:label "G Major"; ] ;
+		lv2:scalePoint [ rdf:value  9; rdfs:label "Ab Major"; ] ;
+		lv2:scalePoint [ rdf:value 10; rdfs:label "A Major"; ] ;
+		lv2:scalePoint [ rdf:value 11; rdfs:label "Bb Major"; ] ;
+		lv2:scalePoint [ rdf:value 12; rdfs:label "B Major"; ] ;
+		lv2:portProperty lv2:integer;
+		lv2:portProperty lv2:enumeration ;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 13 ;
+		lv2:symbol "nmask" ;
+		lv2:name "Note Mask";
+		lv2:minimum 0 ;
+		lv2:maximum 4096 ;
+		lv2:portProperty lv2:integer;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 14 ;
+		lv2:symbol "nset" ;
+		lv2:name "Note Set";
+		lv2:minimum 0 ;
+		lv2:maximum 4096 ;
+		lv2:portProperty lv2:integer;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 15 ;
+		lv2:symbol "bend" ;
+		lv2:name "Pitch Bend";
+		lv2:minimum -1.0 ;
+		lv2:maximum  1.0 ;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 16 ;
+		lv2:symbol "error" ;
+		lv2:name "Pitch Error";
+		lv2:minimum -1.0 ;
+		lv2:maximum  1.0 ;
+	] , [
+		a lv2:OutputPort ,
+			lv2:ControlPort ;
+		lv2:index 17 ;
+		lv2:symbol "latency" ;
+		lv2:name "latency";
+		lv2:minimum 0 ;
+		lv2:maximum 4096;
+		lv2:portProperty lv2:reportsLatency, lv2:integer;
+		units:unit units:frame;
+	];
+	rdfs:comment "AT1 is an 'autotuner', normally used to correct the pitch of a voice singing (slightly) out of tune. The 'expected' pitch can be controlled by MIDI, or be a fixed set of notes. AT1 can probably be used on some instruments as well, but is primarily designed to cover the vocal range.";
+	.
