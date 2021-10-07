@@ -7,7 +7,7 @@ extern const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index);
 static const RtkLv2Description _fat1_micro = {
 	&lv2_descriptor,
 	&lv2ui_descriptor
-	, 0 // uint32_t dsp_descriptor_id
+	, 1 // uint32_t dsp_descriptor_id
 	, 0 // uint32_t gui_descriptor_id
 	, "Autotune (microtonal)" // const char *plugin_human_id
 	, (const struct LV2Port[41])
