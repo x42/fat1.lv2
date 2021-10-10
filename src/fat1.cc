@@ -141,7 +141,7 @@ parse_midi (Fat1*                self,
 
 static int
 set_scale (int scale_id) {
-	if (scale_id <= 0 || scale_id > 12) {
+	if (scale_id <= 0 || scale_id > 24) {
 		/* chromatic */
 		return 4095;
 	}
@@ -149,6 +149,10 @@ set_scale (int scale_id) {
 	static const bool western[12] = {
 		1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1
 	};
+
+	if (scale_id > 12) {
+		scale_id = 1 + (scale_id + 2) % 12;
+	}
 
 	int b, i;
 	int notemask = 0;

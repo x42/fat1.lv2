@@ -24,7 +24,7 @@ static const RtkLv2Description _fat1_scales = {
 		{ "offset", CONTROL_IN, 0.000000, -2.000000, 2.000000, "Adds an offset in the range of +/- two semitones to the pitch correction. With the Correction control set to zero the result is a constant pitch change."},
 		{ "bendrange", CONTROL_IN, 2.000000, 0.000000, 7.000000, "Configures the effect range of MIDI pitch-bend messages. Pitch-bend is added to the pitch correction offset."},
 		{ "fastmode", CONTROL_IN, 0.000000, 0.000000, 1.000000, "Reduces latency by allowing initially uncorrected signal. This can be useful in live situations."},
-		{ "scale", CONTROL_IN, 0.000000, 0.000000, 12.000000, "Scale"},
+		{ "scale", CONTROL_IN, 0.000000, 0.000000, 24.000000, "Scale"},
 		{ "nmask", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Mask"},
 		{ "nset", CONTROL_OUT, nan, 0.000000, 4096.000000, "Note Set"},
 		{ "bend", CONTROL_OUT, nan, -1.000000, 1.000000, "Pitch Bend"},
