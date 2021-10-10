@@ -234,7 +234,7 @@ ifneq ($(MOD),)
 		lv2ttl/manifest.modgui.in >> $(BUILDDIR)manifest.ttl
 endif
 
-$(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).base.ttl.in lv2ttl/$(LV2NAME).chroma.ttl.in lv2ttl/$(LV2NAME).micro.ttl.in lv2ttl/$(LV2NAME).gui.in
+$(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).base.ttl.in lv2ttl/$(LV2NAME).chroma.ttl.in lv2ttl/$(LV2NAME).micro.ttl.in lv2ttl/$(LV2NAME).scales.ttl.in lv2ttl/$(LV2NAME).gui.in
 	@mkdir -p $(BUILDDIR)
 	sed "s/@LV2NAME@/$(LV2NAME)/g" \
 		lv2ttl/$(LV2NAME).ttl.in > $(BUILDDIR)$(LV2NAME).ttl
