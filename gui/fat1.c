@@ -1359,6 +1359,7 @@ port_event (LV2UI_Handle handle,
 
 	if (ui->scales) {
 		if (port_index > 16) {
+			ui->disable_signals = false;
 			return;
 		}
 		if (port_index == FAT_NOTE) {
