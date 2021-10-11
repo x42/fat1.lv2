@@ -479,8 +479,8 @@ static void keysel_apply (Fat1UI* ui)
 			}
 			if (ui->key_mod == 2) { k += 11; }
 			if (ui->key_mod == 1) { ++k; }
-			if (ui->key_majmin == 1) { k += 3; }
 			k = 1 + (k % 12);
+			if (ui->key_majmin == 1) { k += 12; }
 		}
 		float val = k;
 		ui->write (ui->controller, FAT_NOTE, sizeof (float), 0, (const void*) &val);
