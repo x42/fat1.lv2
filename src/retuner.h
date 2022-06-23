@@ -97,7 +97,7 @@ public:
 	}
 
 private:
-	void  findcycle (void);
+	float findcycle (void);
 	void  finderror (void);
 
 	static float cubic (float* v, float a);

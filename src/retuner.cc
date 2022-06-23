@@ -84,7 +84,7 @@ Retuner::Retuner (int fsamp)
 	_invplan = fftwf_plan_dft_c2r_1d (_fftlen, _fftFdata, _fftTdata, FFTW_ESTIMATE);
 
 	// Clear input buffer.
-	memset (_ipbuff, 0, (_ipsize + 1) * sizeof (float));
+	memset (_ipbuff, 0, (_ipsize + 3) * sizeof (float));
 
 	// Create crossfade function, half of raised cosine.
 	for (i = 0; i < _frsize; i++) {
@@ -299,10 +299,11 @@ Retuner::process (int nfram, float const* inp, float* out)
 			// Estimate the pitch every 4th fragment.
 			if (++_frcount == 4) {
 				_frcount = 0;
-				findcycle ();
-				if (_cycle) {
+				float cycle = findcycle ();
+				if (cycle > 0) {
 					// If the pitch estimate succeeds, find the
 					// nearest note and required resampling ratio.
+					_cycle = cycle;
 					_count = 0;
 					finderror ();
 				} else if (++_count > 5) {
@@ -366,11 +367,12 @@ Retuner::process (int nfram, float const* inp, float* out)
 	return 0;
 }
 
-void
+float
 Retuner::findcycle (void)
 {
 	int   d, h, i, j, k;
 	float f, m, t, x, y, z;
+	float cycle = 0;
 #ifdef MOD
 	float rms = 0;
 #endif
@@ -389,8 +391,7 @@ Retuner::findcycle (void)
 	}
 #ifdef MOD                                  // ignore noise-floor
 	if (rms < _fftlen * 0.000031623f) { // signal < -45dBFS/RMS
-		_cycle = 0;
-		return;
+		return 0;
 	}
 #endif
 	fftwf_execute_dft_r2c (_fwdplan, _fftTdata, _fftFdata);
@@ -416,11 +417,13 @@ Retuner::findcycle (void)
 		x = y;
 	}
 	i -= 4;
-	_cycle = 0;
-	if (i >= _ifmax)
-		return;
-	if (i < _ifmin)
+	if (i >= _ifmax) {
+		return 0;
+	}
+
+	if (i < _ifmin) {
 		i = _ifmin;
+	}
 	x = _fftTdata[--i];
 	y = _fftTdata[++i];
 	m = 0;
@@ -440,9 +443,10 @@ Retuner::findcycle (void)
 		y      = _fftTdata[j];
 		z      = _fftTdata[j + 1];
 		if (fabsf(z - 2 * y + x) > 2e-9f) {
-			_cycle = j + 0.5f * (x - z) / (z - 2 * y + x - 1e-9f);
+			cycle = j + 0.5f * (x - z) / (z - 2 * y + x - 1e-9f);
 		}
 	}
+	return cycle;
 }
 
 void
