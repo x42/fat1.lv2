@@ -29,6 +29,7 @@
 
 #include "../src/fat1.h"
 
+#define RTK_USE_HOST_COLORS
 #define RTK_URI FAT1_URI
 #define RTK_GUI "#ui"
 
@@ -183,7 +184,7 @@ static float k_step (const uint32_t c) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const float c_dlf[4] = {0.8, 0.8, 0.8, 1.0}; // dial faceplate fg
+static float c_dlf[4] = {0.8, 0.8, 0.8, 1.0}; // dial faceplate fg
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -977,10 +978,10 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 	const int hbend = ui->m0_pkh - 3;
 
 	rounded_rectangle (cr, xbend, ybend, 2 * xbw, hbend, 3);
-	CairoSetSouerceRGBA (c_blk);
+	CairoSetSouerceRGBADarkLight (c_blk, c_wht);
 	cairo_set_line_width(cr, 1.5);
 	cairo_stroke_preserve (cr);
-	CairoSetSouerceRGBA (c_g20);
+	CairoSetSouerceRGBADarkLight (c_g20, c_g80);
 	cairo_fill (cr);
 
 	if (ui->bend != 0 && ui->bendmult > 0) {
@@ -997,7 +998,7 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 		snprintf(txt, 64, "%+3.0f\u00A2", 100.f * ui->bend * ui->bendmult);
 		write_text_full (cr, txt, ui->font[0], xbend + xbw, ybend + .5 * hbend, -.5 * M_PI, 2, c_dlf);
 	} else {
-		CairoSetSouerceRGBA (c_wht);
+		CairoSetSouerceRGBADarkLight (c_wht, c_blk);
 		write_text_full (cr, "(Pitch-bend)", ui->font[0], xbend + xbw, ybend + .5 * hbend, -.5 * M_PI, 2, c_dlf);
 	}
 
@@ -1038,7 +1039,7 @@ static bool m0_expose_event (RobWidget* handle, cairo_t* cr, cairo_rectangle_t* 
 	cairo_restore (cr);
 
 	cairo_set_line_width(cr, 1.0);
-	CairoSetSouerceRGBA (c_wht);
+	CairoSetSouerceRGBADarkLight (c_wht, c_blk);
 
 #define LINE(V) \
 	ex = XPOS(V) - .5; \
@@ -1071,6 +1072,10 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 
 	ui->font[0] = pango_font_description_from_string ("Mono 9px");
 	ui->font[1] = pango_font_description_from_string ("Mono 10px");
+
+	if (is_light_theme ()) {
+		c_dlf[0] = c_dlf[1] = c_dlf[2] = 0.2;
+	}
 
 	prepare_faceplates (ui);
 
