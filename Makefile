@@ -219,9 +219,9 @@ submodule_check:
 submodules:
 	-test -d .git -a .gitmodules -a -f Makefile.git && $(MAKE) -f Makefile.git submodules
 
-all: submodule_check $(BUILDDIR)manifest.ttl $(BUILDDIR)$(LV2NAME).ttl $(targets) $(JACKAPP)
+all: submodule_check $(BUILDDIR)manifest.ttl $(BUILDDIR)presets.ttl $(BUILDDIR)$(LV2NAME).ttl $(targets) $(JACKAPP)
 
-$(BUILDDIR)manifest.ttl: lv2ttl/manifest.ttl.in lv2ttl/manifest.gui.in lv2ttl/manifest.modgui.in Makefile
+$(BUILDDIR)manifest.ttl: lv2ttl/manifest.ttl.in lv2ttl/manifest.gui.in lv2ttl/manifest.modgui.in Makefile lv2ttl/presets.ttl.in presets/*.ttl
 	@mkdir -p $(BUILDDIR)
 	sed "s/@LV2NAME@/$(LV2NAME)/g;s/@LIB_EXT@/$(LIB_EXT)/" \
 		lv2ttl/manifest.ttl.in > $(BUILDDIR)manifest.ttl
@@ -233,6 +233,28 @@ ifneq ($(MOD),)
 	sed "s/@LV2NAME@/$(LV2NAME)/g" \
 		lv2ttl/manifest.modgui.in >> $(BUILDDIR)manifest.ttl
 endif
+	@for suffix in fat1 fat1\#microtonal fat1\#scales; do \
+		for file in presets/*.ttl; do \
+			echo "" \
+				>> $(BUILDDIR)manifest.ttl;\
+			head -n 3 $$file \
+				| sed "s/@SUFFIX@/$$suffix/" \
+				>> $(BUILDDIR)manifest.ttl; \
+			echo "rdfs:seeAlso <presets.ttl> ." \
+				>> $(BUILDDIR)manifest.ttl; \
+		done \
+	done
+
+$(BUILDDIR)presets.ttl: Makefile lv2ttl/presets.ttl.in presets/*.ttl
+	@mkdir -p $(BUILDDIR)
+	cat lv2ttl/presets.ttl.in > $(BUILDDIR)presets.ttl
+	@for suffix in fat1 fat1\#microtonal fat1\#scales; do \
+		for file in presets/*.ttl; do \
+			echo "" \
+				>> $(BUILDDIR)presets.ttl; \
+			sed "s/@SUFFIX@/$$suffix/" $$file >> $(BUILDDIR)presets.ttl; \
+		done \
+	done
 
 $(BUILDDIR)$(LV2NAME).ttl: Makefile lv2ttl/$(LV2NAME).ttl.in lv2ttl/$(LV2NAME).base.ttl.in lv2ttl/$(LV2NAME).chroma.ttl.in lv2ttl/$(LV2NAME).micro.ttl.in lv2ttl/$(LV2NAME).scales.ttl.in lv2ttl/$(LV2NAME).gui.in
 	@mkdir -p $(BUILDDIR)
@@ -291,7 +313,7 @@ uninstall: uninstall-bin uninstall-man
 
 install-bin: all
 	install -d $(DESTDIR)$(LV2DIR)/$(BUNDLE)
-	install -m644 $(BUILDDIR)manifest.ttl $(BUILDDIR)$(LV2NAME).ttl $(DESTDIR)$(LV2DIR)/$(BUNDLE)
+	install -m644 $(BUILDDIR)manifest.ttl $(BUILDDIR)presets.ttl $(BUILDDIR)$(LV2NAME).ttl $(DESTDIR)$(LV2DIR)/$(BUNDLE)
 	install -m755 $(BUILDDIR)$(LV2NAME)$(LIB_EXT) $(DESTDIR)$(LV2DIR)/$(BUNDLE)
 ifneq ($(BUILDOPENGL), no)
 	install -m755 $(BUILDDIR)$(LV2GUI)$(LIB_EXT) $(DESTDIR)$(LV2DIR)/$(BUNDLE)
@@ -307,6 +329,7 @@ endif
 
 uninstall-bin:
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/manifest.ttl
+	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/presets.ttl
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2NAME).ttl
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2NAME)$(LIB_EXT)
 	rm -f $(DESTDIR)$(LV2DIR)/$(BUNDLE)/$(LV2GUI)$(LIB_EXT)
@@ -329,7 +352,7 @@ man: $(APPBLD)x42-fat1
 	help2man -N -o x42-fat1.1 -n "x42 JACK Auto Tune" $(APPBLD)x42-fat1
 
 clean:
-	rm -f $(BUILDDIR)manifest.ttl $(BUILDDIR)$(LV2NAME).ttl \
+	rm -f $(BUILDDIR)manifest.ttl $(BUILDDIR)presets.ttl $(BUILDDIR)$(LV2NAME).ttl \
 	  $(BUILDDIR)$(LV2NAME)$(LIB_EXT) \
 	  $(BUILDDIR)$(LV2GUI)$(LIB_EXT)
 	rm -rf $(BUILDDIR)*.dSYM

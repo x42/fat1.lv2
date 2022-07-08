@@ -1,0 +1,21 @@
+fatpset:slightly_corrected
+  a pset:Preset ;
+  lv2:appliesTo <http://gareus.org/oss/lv2/@SUFFIX@> ;
+
+	rdfs:label "Slightly Corrected" ;
+	lv2:port [
+		lv2:symbol "bias" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "corr" ;
+		pset:value 0.33
+	] , [
+		lv2:symbol "fastmode" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "filter" ;
+		pset:value 0.0425
+	] , [
+		lv2:symbol "offset" ;
+		pset:value 0.0
+	] .

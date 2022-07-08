@@ -1,0 +1,24 @@
+fatpset:live
+  a pset:Preset ;
+  lv2:appliesTo <http://gareus.org/oss/lv2/@SUFFIX@> ;
+
+	rdfs:label "Live" ;
+	lv2:port [
+		lv2:symbol "bias" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "corr" ;
+		pset:value 0.83999997
+	] , [
+		lv2:symbol "fastmode" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "filter" ;
+		pset:value 0.03347345
+	] , [
+		lv2:symbol "offset" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "tuning" ;
+		pset:value 440.0
+	] .

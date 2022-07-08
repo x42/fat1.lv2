@@ -2,8 +2,11 @@
 @prefix kx:    <http://kxstudio.sf.net/ns/lv2ext/external-ui#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix pset:  <http://lv2plug.in/ns/ext/presets#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
+
+@prefix fatpset: <http://gareus.org/oss/lv2/fat1/pset#> .
 
 <http://gareus.org/oss/lv2/fat1>
 	a lv2:Plugin ;
