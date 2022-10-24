@@ -3,6 +3,7 @@ fatpset:slightly_corrected
   lv2:appliesTo <http://gareus.org/oss/lv2/@SUFFIX@> ;
 
 	rdfs:label "Slightly Corrected" ;
+	rdfs:comment "Allow for a bit off key" ;
 	lv2:port [
 		lv2:symbol "bias" ;
 		pset:value 0.5

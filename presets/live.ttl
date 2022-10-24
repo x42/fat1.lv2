@@ -3,6 +3,7 @@ fatpset:live
   lv2:appliesTo <http://gareus.org/oss/lv2/@SUFFIX@> ;
 
 	rdfs:label "Live" ;
+	rdfs:comment "Fast correction mode for live usage" ;
 	lv2:port [
 		lv2:symbol "bias" ;
 		pset:value 0.5
