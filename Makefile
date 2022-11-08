@@ -32,7 +32,7 @@ ifneq (,$(findstring 86,$(MACHINE)))
 endif
 
 ifeq ($(HAVE_SSE),yes)
-  OPTIMIZATIONS ?= -msse -msse2 -mfpmath=sse --fast-math -fomit-frame-pointer -O3 -fno-finite-math-only -DNDEBUG
+  OPTIMIZATIONS ?= -msse -msse2 -mfpmath=sse -ffast-math -fomit-frame-pointer -O3 -fno-finite-math-only -DNDEBUG
 else
   OPTIMIZATIONS ?= -fomit-frame-pointer -O3 -fno-finite-math-only -DNDEBUG
 endif
