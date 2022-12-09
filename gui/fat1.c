@@ -327,7 +327,7 @@ static void dial_annotation_val (RobTkDial* d, cairo_t* cr, void* data) {
 
 static bool tooltip_overlay (RobWidget* rw, cairo_t* cr, cairo_rectangle_t* ev) {
 	Fat1UI* ui = (Fat1UI*)rw->top;
-	assert (ui->tt_id >= 0 && ui->tt_id < 5);
+	assert (ui->tt_id >= 0 && ui->tt_id < 6);
 
 	cairo_save(cr);
 	rw->resized = TRUE;
