@@ -1068,7 +1068,7 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	/* main widget: layout */
 	ui->rw = rob_hbox_new (FALSE, 2);
 	robwidget_make_toplevel (ui->rw, top);
-	robwidget_toplevel_enable_scaling (ui->rw);
+	robwidget_toplevel_enable_scaling (ui->rw, NULL, NULL);
 
 	ui->font[0] = pango_font_description_from_string ("Mono 9px");
 	ui->font[1] = pango_font_description_from_string ("Mono 10px");
