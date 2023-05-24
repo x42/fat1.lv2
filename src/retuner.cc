@@ -35,7 +35,6 @@ Retuner::Retuner (int fsamp)
     , _corroffs (0.0f)
     , _notemask (0xFFF)
     , _fastmode (false)
-    , _lastfastmode (false)
 {
 	int   i, h;
 	float t, x, y;
@@ -131,11 +130,8 @@ Retuner::Retuner (int fsamp)
 		_notescale[i] = i;
 	}
 
-	if (_upsamp) {
-		_readahed = _ipsize / 2 - _frsize * 2;
-	} else {
-		_readahed = _ipsize / 2 - _frsize;
-	}
+	_readahead = 0;
+	_lastreadahead = 0;
 }
 
 Retuner::~Retuner (void)
@@ -153,7 +149,7 @@ Retuner::~Retuner (void)
 int
 Retuner::process (int nfram, float const* inp, float* out)
 {
-	int   i, ii, k, fi, ra, lra;
+	int   i, ii, k, fi;
 	float ph, dp, r1, r2, dr, u1, u2, v;
 
 	// Pitch shifting is done by resampling the input at the
@@ -174,15 +170,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 	// with process() calls, so we may be in the middle of
 	// a fragment here.
 
-	// Fast mode allows reading samples directly from the input,
-	// before the pitch has been computed. This is useful in
-	// live situation.
-	ra = _fastmode ? _readahed : 0;
-
 	while (nfram) {
-
-		// Last read-ahead position for crossfading if Fast mode has changed
-		lra = _lastfastmode ? _readahed : 0;
 
 		// Don't go past the end of the current fragment.
 		k = _frsize - fi;
@@ -222,13 +210,13 @@ Retuner::process (int nfram, float const* inp, float* out)
 			// Interpolate and crossfade.
 			while (k--) {
 				i  = (int)r1;
-				ii = i + lra;
+				ii = i + _lastreadahead;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 				u1 = cubic (_ipbuff + ii, r1 - i);
 
 				i  = (int)r2;
-				ii = i + ra;
+				ii = i + _readahead;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 				u2 = cubic (_ipbuff + ii, r2 - i);
@@ -242,7 +230,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 				if (r2 >= _ipsize)
 					r2 -= _ipsize;
 			}
-		} else if (ra == 0 && lra == 0) {
+		} else if (!_readahead && !_lastreadahead) {
 			// Interpolation only.
 			fi += k;
 			while (k--) {
@@ -252,17 +240,17 @@ Retuner::process (int nfram, float const* inp, float* out)
 				if (r1 >= _ipsize)
 					r1 -= _ipsize;
 			}
-		} else if (ra != lra) {
+		} else if (_readahead != _lastreadahead) {
 			// crossfade from/to fastmode
 			while (k--) {
 				i  = (int)r1;
-				ii = i + lra;
+				ii = i + _lastreadahead;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 				u1 = cubic (_ipbuff + ii, r1 - i);
 
 				i  = (int)r1;
-				ii = i + ra;
+				ii = i + _readahead;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 				u2 = cubic (_ipbuff + ii, r1 - i);
@@ -274,11 +262,11 @@ Retuner::process (int nfram, float const* inp, float* out)
 					r1 -= _ipsize;
 			}
 		} else {
-			// Interpolation only.
+			// Interpolation only (fastmode).
 			fi += k;
 			while (k--) {
 				i  = (int)r1;
-				ii = i + lra;
+				ii = i + _readahead;
 				if (ii >= _ipsize)
 					ii -= _ipsize;
 
@@ -289,13 +277,10 @@ Retuner::process (int nfram, float const* inp, float* out)
 			}
 		}
 
-
-		_lastfastmode = _fastmode;
-
-
 		// If at end of fragment check for jump.
 		if (fi == _frsize) {
 			fi = 0;
+
 			// Estimate the pitch every 4th fragment.
 			if (++_frcount == 4) {
 				_frcount = 0;
@@ -356,7 +341,19 @@ Retuner::process (int nfram, float const* inp, float* out)
 					r2 -= _ipsize;
 			} else
 				_xfade = false;
+
+			// Fast mode allows outputting the signal before the pitch has been computed,
+			// resulting in a lower latency at the cost of a small delay between the correction
+			// and the pitch analysis. This is useful in live situation.
+			_lastreadahead = _readahead;
+
+			if (_fastmode)
+				_readahead = _ipsize * 7 / 16;
+			else
+				_readahead = 0;
+
 		}
+
 	}
 
 	// Save local state.

@@ -301,7 +301,7 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_fastmode (*self->port[FAT_FAST]);
 
 	if (*self->port[FAT_FAST]) {
-		*self->port[FAT_LTNC] = self->latency / 4;
+		*self->port[FAT_LTNC] = self->latency / 8;
 	} else {
 		*self->port[FAT_LTNC] = self->latency;
 	}

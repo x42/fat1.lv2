@@ -140,8 +140,8 @@ private:
 
 	float _notescale[12];
 	bool  _fastmode;
-	bool  _lastfastmode;
-	int   _readahed;
+	int   _readahead;
+	int   _lastreadahead;
 };
 
 }; // namespace LV2AT
