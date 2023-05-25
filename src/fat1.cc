@@ -301,9 +301,10 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_fastmode (*self->port[FAT_FAST]);
 
 	if (*self->port[FAT_FAST]) {
-		*self->port[FAT_LTNC] = self->latency / 8;
+		/* add 32 samples for resampler's latency */
+		*self->port[FAT_LTNC] = self->retuner->upsample () ? 32 : 0 + self->latency / 8;
 	} else {
-		*self->port[FAT_LTNC] = self->latency;
+		*self->port[FAT_LTNC] = self->retuner->upsample () ? 32 : 0 + self->latency;
 	}
 
 	if (!self->midiin || n_samples == 0) {
