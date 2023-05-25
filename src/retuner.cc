@@ -150,7 +150,7 @@ int
 Retuner::process (int nfram, float const* inp, float* out)
 {
 	int   i, ii, k, fi;
-	float ph, dp, r1, r2, dr, u1, u2, v;
+	float ph, dp, r1, r2, dr, dr2, u1, u2, v;
 
 	// Pitch shifting is done by resampling the input at the
 	// required ratio, and eventually jumping forward or back
@@ -318,6 +318,12 @@ Retuner::process (int nfram, float const* inp, float* out)
 			// the circular input buffer limits it must be at
 			// least one fragment size.
 			dr = _cycle * (int)(ceilf (_frsize / _cycle));
+
+			// If possible, use a jump size that takes the
+			// playback rate (_ratio) into account
+			dr2 = _cycle * (int)(ceilf (_ratio * _frsize / _cycle));
+			if (dr2 >= _frsize) dr = dr2;
+
 			dp = dr / _frsize;
 			ph = r1 - _ipindex;
 			if (ph < 0)
@@ -327,11 +333,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 				dr *= 2;
 			}
 	
-			if (_ratio < .75)
-				ph = ph / _frsize - 8;
-			else
-				ph = ph / _frsize + 2 * _ratio - 10;
-
+			ph = ph / _frsize - 8;
 			if (ph > 0.5f) {
 				// Jump back by 'dr' frames and crossfade.
 				_xfade = true;
