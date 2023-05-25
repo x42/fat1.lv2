@@ -35,6 +35,8 @@ Retuner::Retuner (int fsamp)
     , _corroffs (0.0f)
     , _notemask (0xFFF)
     , _fastmode (false)
+    , _readahead (0)
+    , _lastreadahead (0)
 {
 	int   i, h;
 	float t, x, y;
@@ -129,9 +131,6 @@ Retuner::Retuner (int fsamp)
 	for (int i = 0; i < 12; ++i) {
 		_notescale[i] = i;
 	}
-
-	_readahead = 0;
-	_lastreadahead = 0;
 }
 
 Retuner::~Retuner (void)
@@ -171,7 +170,6 @@ Retuner::process (int nfram, float const* inp, float* out)
 	// a fragment here.
 
 	while (nfram) {
-
 		// Don't go past the end of the current fragment.
 		k = _frsize - fi;
 		if (nfram < k)
@@ -230,7 +228,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 				if (r2 >= _ipsize)
 					r2 -= _ipsize;
 			}
-		} else if (!_readahead && !_lastreadahead) {
+		} else if (0 == _readahead && 0 == _lastreadahead) {
 			// Interpolation only.
 			fi += k;
 			while (k--) {
@@ -283,7 +281,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 
 			// Estimate the pitch every 4th fragment.
 			if (++_frcount == 4) {
-				_frcount = 0;
+				_frcount    = 0;
 				float cycle = findcycle ();
 				if (cycle > 0) {
 					// If the pitch estimate succeeds, find the
@@ -351,9 +349,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 				_readahead = _ipsize * 7 / 16;
 			else
 				_readahead = 0;
-
 		}
-
 	}
 
 	// Save local state.
@@ -436,10 +432,10 @@ Retuner::findcycle (void)
 		y = z;
 	}
 	if (j) {
-		x      = _fftTdata[j - 1];
-		y      = _fftTdata[j];
-		z      = _fftTdata[j + 1];
-		if (fabsf(z - 2 * y + x) > 2e-9f) {
+		x = _fftTdata[j - 1];
+		y = _fftTdata[j];
+		z = _fftTdata[j + 1];
+		if (fabsf (z - 2 * y + x) > 2e-9f) {
 			cycle = j + 0.5f * (x - z) / (z - 2 * y + x - 1e-9f);
 		}
 	}
