@@ -354,7 +354,9 @@ Retuner::process (int nfram, float const* inp, float* out)
 			// and the pitch analysis. This is useful in live situation.
 			_lastreadahead = _readahead;
 
-			if (_fastmode)
+			if (_fastmode && _ratio < 1.5)
+				// Bypass fast mode when pitch ratio is high to avoid reading
+				// outside the input buffer limits
 				_readahead = _ipsize * 7 / 16;
 			else
 				_readahead = 0;
