@@ -326,7 +326,12 @@ Retuner::process (int nfram, float const* inp, float* out)
 				ph /= 2;
 				dr *= 2;
 			}
-			ph = ph / _frsize + 2 * _ratio - 10;
+	
+			if (_ratio < .75)
+				ph = ph / _frsize - 8;
+			else
+				ph = ph / _frsize + 2 * _ratio - 10;
+
 			if (ph > 0.5f) {
 				// Jump back by 'dr' frames and crossfade.
 				_xfade = true;
