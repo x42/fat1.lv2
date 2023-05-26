@@ -339,7 +339,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 			ph = ph / _frsize - 8;
 
 			if (_cycle == _frsize && _error == 0 && ph != 0.0f) {
-				// If signal is unvoiced, reset playhead position and cro
+				// If signal is unvoiced, reset playhead position and crossfade
 				// to avoid jitter and get a consistent output latency
 				_xfade = true;
 				r2 = _ipindex - _ipsize / 2;
