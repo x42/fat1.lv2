@@ -96,6 +96,12 @@ public:
 		return 12.0f * _error;
 	}
 
+	bool
+	upsample (void) const
+	{
+		return _upsamp;
+	}
+
 private:
 	float findcycle (void);
 	void  finderror (void);
