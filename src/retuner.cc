@@ -322,7 +322,9 @@ Retuner::process (int nfram, float const* inp, float* out)
 			dr2 = _cycle * (int)(ceilf (_ratio * _frsize / _cycle));
 			if (dr2 >= _frsize) dr = dr2;
 
+			// Compute jump size in fragment units
 			dp = dr / _frsize;
+
 			ph = r1 - _ipindex;
 			if (ph < 0)
 				ph += _ipsize;
@@ -331,21 +333,31 @@ Retuner::process (int nfram, float const* inp, float* out)
 				dr *= 2;
 			}
 	
+			// ph is the playhead position between -8 and 8 fragment units,
+			// relative to the unpitched playhead position (0), the jumps
+            // aim to make it stay near 0 while preserving coherence in the signal
 			ph = ph / _frsize - 8;
-			if (ph > 0.5f) {
-				// Jump back by 'dr' frames and crossfade.
+
+			if (_cycle == _frsize && _error == 0 && ph != 0.0f) {
+				// If signal is unvoiced, reset playhead position and cro
+				// to avoid jitter and get a consistent output latency
+				_xfade = true;
+				r2 = _ipindex - _ipsize / 2;
+			} else if (ph > 0.5f) {
+				// If playhead is too early by more than half a fragment,
+				// jump back by 'dr' frames and crossfade.
 				_xfade = true;
 				r2     = r1 - dr;
-				if (r2 < 0)
-					r2 += _ipsize;
 			} else if (ph + dp < 0.5f) {
-				// Jump forward by 'dr' frames and crossfade.
+				// If jumping forward doesn't make the playhead too early,
+				// jump forward by 'dr' frames and crossfade.
 				_xfade = true;
 				r2     = r1 + dr;
-				if (r2 >= _ipsize)
-					r2 -= _ipsize;
 			} else
 				_xfade = false;
+
+			if (r2 < 0)
+				r2 += _ipsize;
 
 			// Fast mode allows outputting the signal before the pitch has been computed,
 			// resulting in a lower latency at the cost of a small delay between the correction
