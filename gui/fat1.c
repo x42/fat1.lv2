@@ -152,7 +152,7 @@ static const char* tooltips[] = {
 		"pitch error gets corrected. Full correction may remove\n"
 		"expression or vibrato.\n</markup>",
 
-	"<markup><b>Offset.</b> Adds an offset in the range of -24/+12\n"
+	"<markup><b>Offset.</b> Adds an offset in the range of +/- two\n"
 		"semitones to the pitch correction. With the Correction\n"
 		"control set to zero the result is a constant pitch change.\n</markup>",
 
