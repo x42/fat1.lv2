@@ -276,18 +276,17 @@ static void prepare_faceplates (Fat1UI* ui) {
 	write_text_full(cr,   "1", ui->font[0], xlp-2, ylp,  0, 3, c_dlf);
 	cairo_destroy (cr);
 
-	INIT_DIAL_SF(ui->dial_bg[4], GED_WIDTH + 16, GED_HEIGHT + 28);
-	RESPLABLEL(-.16);
-	write_text_full(cr, "-24", ui->font[0], xlp+7, ylp-1,  0, 1, c_dlf);
+	INIT_DIAL_SF(ui->dial_bg[4], GED_WIDTH + 8, GED_HEIGHT + 20);
 	RESPLABLEL(0.00);
+	write_text_full(cr, "-24", ui->font[0], xlp+2, ylp,  0, 1, c_dlf);
 	RESPLABLEL(.16);
-	write_text_full(cr, "-12", ui->font[0], xlp+2, ylp-2,  0, 1, c_dlf);
 	RESPLABLEL(.33);
 	RESPLABLEL(0.5);
-	write_text_full(cr,  "0", ui->font[0], xlp,   ylp,  0, 2, c_dlf);
 	RESPLABLEL(.66);
+	write_text_full(cr,  "0", ui->font[0], xlp,   ylp,  0, 2, c_dlf);
 	RESPLABLEL(.83);
-	write_text_full(cr, "+12", ui->font[0], xlp-3, ylp-1,  0, 3, c_dlf);
+	RESPLABLEL(1.0);
+	write_text_full(cr, "+12", ui->font[0], xlp-2, ylp,  0, 3, c_dlf);
 	cairo_destroy (cr);
 
 #undef DIALDOTS
@@ -1134,8 +1133,6 @@ static RobWidget* toplevel (Fat1UI* ui, void* const top) {
 	ui->spn_ctrl[1]->displaymode = 3; // use dots
 	ui->spn_ctrl[2]->displaymode = 3;
 	ui->spn_ctrl[3]->displaymode = 3;
-	ui->spn_ctrl[4]->w_width += 8;
-	ui->spn_ctrl[4]->angle_offset = -0.25;
 
 	/* these numerics are meaningful */
 	robtk_dial_annotation_callback (ui->spn_ctrl[0], dial_annotation_hz, ui);
