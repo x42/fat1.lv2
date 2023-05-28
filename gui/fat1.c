@@ -130,7 +130,7 @@ const struct CtrlRange ctrl_range[] = {
 	{ 0.0, 1.0, 0.5, 0.01,  2, false, "Bias"},
 	{ 0.5, .02, 0.1, 200.,  5, true,  "Filter"},
 	{ 0.0, 1.0, 1.0, 0.01,  2, false, "Corr."},
-	{ -24., 12.0, 0.0, 0.01,  5, false, "Offset"},
+	{ -2., 2.0, 0.0, 0.01,  5, false, "Offset"},
 };
 
 static const char* tooltips[] = {
@@ -278,15 +278,15 @@ static void prepare_faceplates (Fat1UI* ui) {
 
 	INIT_DIAL_SF(ui->dial_bg[4], GED_WIDTH + 8, GED_HEIGHT + 20);
 	RESPLABLEL(0.00);
-	write_text_full(cr, "-24", ui->font[0], xlp+2, ylp,  0, 1, c_dlf);
+	write_text_full(cr, "-2", ui->font[0], xlp+2, ylp,  0, 1, c_dlf);
 	RESPLABLEL(.16);
 	RESPLABLEL(.33);
 	RESPLABLEL(0.5);
-	RESPLABLEL(.66);
 	write_text_full(cr,  "0", ui->font[0], xlp,   ylp,  0, 2, c_dlf);
+	RESPLABLEL(.66);
 	RESPLABLEL(.83);
 	RESPLABLEL(1.0);
-	write_text_full(cr, "+12", ui->font[0], xlp-2, ylp,  0, 3, c_dlf);
+	write_text_full(cr, "+2", ui->font[0], xlp-2, ylp,  0, 3, c_dlf);
 	cairo_destroy (cr);
 
 #undef DIALDOTS
