@@ -71,6 +71,7 @@ typedef struct {
 	bool panic_btn;
 	bool microtonal;
 	bool scales;
+	bool extended_pitch_range;
 
 	uint32_t noteset_update_interval;
 	uint32_t noteset_update_counter;
@@ -188,14 +189,21 @@ instantiate (const LV2_Descriptor*     descriptor,
 	LV2_URID_Map* map  = NULL;
 
 	if (0 == strcmp (descriptor->URI, FAT1_URI)) {
-		self->microtonal = false;
-		self->scales     = false;
+		self->microtonal		   = false;
+		self->scales     		   = false;
+		self->extended_pitch_range = false;
 	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#microtonal")) {
-		self->microtonal = true;
-		self->scales     = false;
+		self->microtonal		   = true;
+		self->scales     		   = false;
+		self->extended_pitch_range = 1;
 	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#scales")) {
-		self->microtonal = false;
-		self->scales     = true;
+		self->microtonal		   = false;
+		self->scales     		   = true;
+		self->extended_pitch_range = false;
+	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#fx")) {
+		self->microtonal		   = true;
+		self->scales     		   = false;
+		self->extended_pitch_range = true;
 	} else {
 		free (self);
 		return 0;
@@ -384,7 +392,10 @@ run (LV2_Handle instance, uint32_t n_samples)
 	self->retuner->set_notebias (*self->port[FAT_BIAS]);
 	self->retuner->set_corrfilt (*self->port[FAT_FILT]);
 	self->retuner->set_corrgain (*self->port[FAT_CORR]);
-	self->retuner->set_corroffs (*self->port[FAT_OFFS] + *self->port[FAT_PBST] * self->pitchbend);
+	if (self->extended_pitch_range)
+		self->retuner->set_corroffs (*self->port[FAT_OFFS] * 12 + *self->port[FAT_PBST] * self->pitchbend);
+	else
+		self->retuner->set_corroffs (*self->port[FAT_OFFS] + *self->port[FAT_PBST] * self->pitchbend);
 	self->retuner->set_notemask (notes);
 
 	if (self->microtonal) {
@@ -483,6 +494,17 @@ static const LV2_Descriptor descriptor_scales = {
 	extension_data
 };
 
+static const LV2_Descriptor descriptor_fx = {
+	FAT1_URI "#fx",
+	instantiate,
+	connect_port,
+	activate,
+	run,
+	NULL,
+	cleanup,
+	extension_data
+};
+
 #undef LV2_SYMBOL_EXPORT
 #ifdef _WIN32
 #  define LV2_SYMBOL_EXPORT __declspec(dllexport)
@@ -500,6 +522,8 @@ lv2_descriptor (uint32_t index)
 			return &descriptor_microtonal;
 		case 2:
 			return &descriptor_scales;
+		case 3:
+			return &descriptor_fx;
 		default:
 			return NULL;
 	}

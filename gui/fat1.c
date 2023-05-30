@@ -122,6 +122,7 @@ typedef struct {
 
 	bool microtonal;
 	bool scales;
+	bool extended_pitch_range;
 	const char* nfo;
 } Fat1UI;
 
@@ -323,7 +324,10 @@ static void dial_annotation_hz (RobTkDial* d, cairo_t* cr, void* data) {
 static void dial_annotation_val (RobTkDial* d, cairo_t* cr, void* data) {
 	Fat1UI* ui = (Fat1UI*) (data);
 	char txt[16];
-	snprintf (txt, 16, "%+5.0f ct", d->cur * 100.f);
+	if (ui->extended_pitch_range)
+		snprintf (txt, 16, "%+5.0f ct", d->cur * 1200.f);
+	else
+		snprintf (txt, 16, "%+5.0f ct", d->cur * 100.f);
 	display_annotation (ui, d, cr, txt);
 }
 
@@ -1287,14 +1291,21 @@ instantiate (
 	}
 
 	if (0 == strcmp(plugin_uri, FAT1_URI)) {
-		ui->microtonal = false;
-		ui->scales     = false;
+		ui->microtonal 			 = false;
+		ui->scales     			 = false;
+		ui->extended_pitch_range = false;
 	} else if (0 == strcmp(plugin_uri, FAT1_URI "#microtonal")) {
-		ui->microtonal = true;
-		ui->scales     = false;
+		ui->microtonal 			 = true;
+		ui->scales     			 = false;
+		ui->extended_pitch_range = false;
 	} else if (0 == strcmp(plugin_uri, FAT1_URI "#scales")) {
-		ui->microtonal = false;
-		ui->scales     = true;
+		ui->microtonal 			 = false;
+		ui->scales     			 = true;
+		ui->extended_pitch_range = false;
+	} else if (0 == strcmp(plugin_uri, FAT1_URI "#fx")) {
+		ui->microtonal 			 = true;
+		ui->scales     			 = false;
+		ui->extended_pitch_range = true;
 	} else {
 		free (ui);
 		return 0;
