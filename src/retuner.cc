@@ -37,6 +37,8 @@ Retuner::Retuner (int fsamp)
     , _fastmode (false)
     , _readahead (0)
     , _lastreadahead (0)
+    , _voiced (false)
+    , _lastvoiced (false)
 {
 	int   i, h;
 	float t, x, y;
@@ -289,6 +291,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 					_cycle = cycle;
 					_count = 0;
 					finderror ();
+					_voiced = true;
 				} else if (++_count > 5) {
 					// If the pitch estimate fails, the current
 					// ratio is kept for 5 fragments. After that
@@ -297,6 +300,7 @@ Retuner::process (int nfram, float const* inp, float* out)
 					_count = 5;
 					_cycle = _frsize;
 					_error = 0;
+					_voiced = false;
 				} else if (_count == 2) {
 					// Bias is removed after two unvoiced fragments.
 					_lastnote = -1;
@@ -338,7 +342,7 @@ Retuner::process (int nfram, float const* inp, float* out)
             // aim to make it stay near 0 while preserving coherence in the signal
 			ph = ph / _frsize - 8;
 
-			if (_cycle == _frsize && _error == 0 && ph != 0.0f) {
+			if (!_voiced && _lastvoiced) {
 				// If signal is unvoiced, reset playhead position and crossfade
 				// to avoid jitter and get a consistent output latency
 				_xfade = true;
@@ -374,6 +378,9 @@ Retuner::process (int nfram, float const* inp, float* out)
 				_readahead = _ipsize * 7 / 16;
 			else
 				_readahead = 0;
+				
+			_lastvoiced = _voiced;
+
 		}
 	}
 
