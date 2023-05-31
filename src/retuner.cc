@@ -365,8 +365,12 @@ Retuner::process (int nfram, float const* inp, float* out)
 			_lastreadahead = _readahead;
 
 			if (_fastmode && _ratio < 1.5)
-				// Bypass fast mode when pitch ratio is high to avoid reading
-				// outside the input buffer limits
+				// Bypass fast mode when pitch ratio is high.
+				// In fast mode, the playhead is moved as close as possible behind
+				// the writehead (1/16th of the input buffer instead of 1/2).
+				// Since the playhead may be up to 0.5/16th early (see "ph > 0.5f")
+				// before a jump occurs, playing above 1.5x speed may end up with
+				// the playhead going beyond the writehead before the next jump check.
 				_readahead = _ipsize * 7 / 16;
 			else
 				_readahead = 0;
