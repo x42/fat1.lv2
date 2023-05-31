@@ -305,16 +305,6 @@ Retuner::process (int nfram, float const* inp, float* out)
 				_ratio = powf (2.0f, _corroffs / 12.0f - _error * _corrgain);
 			}
 
-			// Fast mode allows outputting the signal before the pitch has been computed,
-			// resulting in a lower latency at the cost of a small delay between the correction
-			// and the pitch analysis. This is useful in live situation.
-			_lastreadahead = _readahead;
-
-			if (_fastmode)
-				_readahead = _ipsize * 7 / 16;
-			else
-				_readahead = 0;
-
 			// If the previous fragment was crossfading,
 			// the end of the new fragment that was faded
 			// in becomes the current read position.
@@ -338,9 +328,6 @@ Retuner::process (int nfram, float const* inp, float* out)
 			ph = r1 - _ipindex;
 			if (ph < 0)
 				ph += _ipsize;
-			ph += _readahead;
-			if (ph > _ipsize)
-				ph -= _ipsize;
 			if (_upsamp) {
 				ph /= 2;
 				dr *= 2;
@@ -372,6 +359,21 @@ Retuner::process (int nfram, float const* inp, float* out)
 			if (r2 < 0)
 				r2 += _ipsize;
 
+			// Fast mode allows outputting the signal before the pitch has been computed,
+			// resulting in a lower latency at the cost of a small delay between the correction
+			// and the pitch analysis. This is useful in live situation.
+			_lastreadahead = _readahead;
+
+			if (_fastmode && _ratio < 1.5)
+				// Bypass fast mode when pitch ratio is high.
+				// In fast mode, the playhead is moved as close as possible behind
+				// the writehead (1/16th of the input buffer instead of 1/2).
+				// Since the playhead may be up to 0.5/16th early (see "ph > 0.5f")
+				// before a jump occurs, playing above 1.5x speed may end up with
+				// the playhead going beyond the writehead before the next jump check.
+				_readahead = _ipsize * 7 / 16;
+			else
+				_readahead = 0;
 		}
 	}
 
