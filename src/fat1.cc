@@ -195,7 +195,7 @@ instantiate (const LV2_Descriptor*     descriptor,
 	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#microtonal")) {
 		self->microtonal		   = true;
 		self->scales     		   = false;
-		self->extended_pitch_range = 1;
+		self->extenteed_pitch_range	   = false;
 	} else if (0 == strcmp (descriptor->URI, FAT1_URI "#scales")) {
 		self->microtonal		   = false;
 		self->scales     		   = true;
