@@ -148,6 +148,7 @@ private:
 	bool  _fastmode;
 	int   _readahead;
 	int   _lastreadahead;
+	bool  _voiced;
 };
 
 }; // namespace LV2AT
