@@ -318,7 +318,7 @@ ifneq ($(BUILDOPENGL)$(BUILDJACKAPP), nono)
  -include $(RW)robtk.mk
 endif
 
-$(BUILDDIR)$(LV2GUI)$(LIB_EXT): gui/$(LV2NAME).c
+$(BUILDDIR)$(LV2GUI)$(LIB_EXT): $(GUI_DEPS)
 
 $(BUILDDIR)modgui: modgui/
 	@mkdir -p $(BUILDDIR)/modgui
